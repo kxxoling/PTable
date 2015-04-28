@@ -371,6 +371,8 @@ class PrettyTable(object):
         if val == "":
             return
         try:
+            val = val.rsplit('f')[0]
+            assert type(val) in (str, unicode)
             assert "." in val
             bits = val.split(".")
             assert len(bits) <= 2
