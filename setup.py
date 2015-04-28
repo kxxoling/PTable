@@ -21,5 +21,5 @@ setup(
     author_email='luke@maurits.id.au',
     url='http://code.google.com/p/prettytable',
     py_modules=['prettytable'],
-    test_suite = "prettytable_test"
+    test_suite="prettytable_test"
 )
