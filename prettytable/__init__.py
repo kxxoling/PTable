@@ -32,4 +32,6 @@
 
 __version__ = "trunk"
 
-from .prettytable import *
+from .prettytable import PrettyTable
+from .prettytable import ALL, HEADER, MSWORD_FRIENDLY, NONE
+from .factory import from_csv, from_db_cursor, from_html, from_html_one

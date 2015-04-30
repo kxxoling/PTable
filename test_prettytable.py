@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 # coding=UTF-8
 
-from prettytable import *
+from prettytable import PrettyTable
+from prettytable import ALL, HEADER, MSWORD_FRIENDLY, NONE
+from prettytable import from_csv, from_db_cursor, from_html, from_html_one
 
 from prettytable._compact import StringIO
 try:
@@ -85,6 +87,7 @@ class BuildEquivelanceTest(unittest.TestCase):
 #    def testAddFieldnamesLater(self):
 #        self.x.field_names = ["City name", "Area", "Population", "Annual Rainfall"]
 #        self.x.get_string()
+
 
 class CityDataTest(unittest.TestCase):
     """Just build the Australian capital city data example table."""
