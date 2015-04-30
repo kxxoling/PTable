@@ -1,65 +1,14 @@
 #!/usr/bin/env python
-#
-# Copyright (c) 2009-2014, Luke Maurits <luke@maurits.id.au>
-# All rights reserved.
-# With contributions from:
-# * Chris Clark
-#  * Klein Stephane
-#  * John Filleau
-#
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions are met:
-#
-# * Redistributions of source code must retain the above copyright notice,
-#   this list of conditions and the following disclaimer.
-# * Redistributions in binary form must reproduce the above copyright notice,
-#   this list of conditions and the following disclaimer in the documentation
-#   and/or other materials provided with the distribution.
-# * The name of the author may not be used to endorse or promote products
-#   derived from this software without specific prior written permission.
-#
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
-# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-# POSSIBILITY OF SUCH DAMAGE.
-
-__version__ = "trunk"
-
 import copy
-import csv
-import itertools
 import math
 import random
 import re
-import sys
 import textwrap
 import unicodedata
+from _compact import py3k, itermap, uni_chr, escape
+from _compact import str_types
+from _compact import unicode_, basestring_
 
-py3k = sys.version_info[0] >= 3
-if py3k:
-    unicode = str
-    basestring = str
-    itermap = map
-    iterzip = zip
-    uni_chr = chr
-    from html.parser import HTMLParser
-else:
-    itermap = itertools.imap
-    iterzip = itertools.izip
-    uni_chr = unichr
-    from HTMLParser import HTMLParser
-
-if py3k and sys.version_info[1] >= 2:
-    from html import escape
-else:
-    from cgi import escape
 
 # hrule styles
 FRAME = 0
@@ -201,10 +150,10 @@ class PrettyTable(object):
         self._attributes = kwargs["attributes"] or {}
 
     def _unicode(self, value):
-        if not isinstance(value, basestring):
+        if not isinstance(value, basestring_):
             value = str(value)
-        if not isinstance(value, unicode):
-            value = unicode(value, self.encoding, "strict")
+        if not isinstance(value, unicode_):
+            value = unicode_(value, self.encoding, "strict")
         return value
 
     def _justify(self, text, width, align):
@@ -362,7 +311,7 @@ class PrettyTable(object):
         if val == "":
             return
         try:
-            assert type(val) in (str, unicode)
+            assert type(val) in str_types
             assert val.isdigit()
         except AssertionError:
             raise Exception("Invalid value for %s!  Must be an integer format string." % name)
@@ -372,7 +321,7 @@ class PrettyTable(object):
             return
         try:
             val = val.rsplit('f')[0]
-            assert type(val) in (str, unicode)
+            assert type(val) in str_types
             assert "." in val
             bits = val.split(".")
             assert len(bits) <= 2
@@ -1595,195 +1544,3 @@ def _char_block_width(char):
 def _str_block_width(val):
     return sum(itermap(_char_block_width, itermap(ord, _re.sub("", val))))
 
-
-##############################
-# TABLE FACTORIES            #
-##############################
-
-def from_csv(fp, field_names=None, **kwargs):
-    fmtparams = {}
-    for param in ["delimiter", "doublequote", "escapechar", "lineterminator",
-                  "quotechar", "quoting", "skipinitialspace", "strict"]:
-        if param in kwargs:
-            fmtparams[param] = kwargs.pop(param)
-    if fmtparams:
-        reader = csv.reader(fp, **fmtparams)
-    else:
-        dialect = csv.Sniffer().sniff(fp.read(1024))
-        fp.seek(0)
-        reader = csv.reader(fp, dialect)
-
-    table = PrettyTable(**kwargs)
-    if field_names:
-        table.field_names = field_names
-    else:
-        if py3k:
-            table.field_names = [x.strip() for x in next(reader)]
-        else:
-            table.field_names = [x.strip() for x in reader.next()]
-
-    for row in reader:
-        table.add_row([x.strip() for x in row])
-
-    return table
-
-
-def from_db_cursor(cursor, **kwargs):
-    if cursor.description:
-        table = PrettyTable(**kwargs)
-        table.field_names = [col[0] for col in cursor.description]
-        for row in cursor.fetchall():
-            table.add_row(row)
-        return table
-
-
-class TableHandler(HTMLParser):
-    def __init__(self, **kwargs):
-        HTMLParser.__init__(self)
-        self.kwargs = kwargs
-        self.tables = []
-        self.last_row = []
-        self.rows = []
-        self.max_row_width = 0
-        self.active = None
-        self.last_content = ""
-        self.is_last_row_header = False
-        self.colspan = 0
-
-    def handle_starttag(self, tag, attrs):
-        self.active = tag
-        if tag == "th":
-            self.is_last_row_header = True
-        for (key, value) in attrs:
-            if key == "colspan":
-                self.colspan = int(value)
-
-
-    def handle_endtag(self, tag):
-        if tag in ["th", "td"]:
-            stripped_content = self.last_content.strip()
-            self.last_row.append(stripped_content)
-            if self.colspan:
-                for i in range(1, self.colspan):
-                    self.last_row.append("")
-                self.colspan = 0
-
-        if tag == "tr":
-            self.rows.append(
-                (self.last_row, self.is_last_row_header))
-            self.max_row_width = max(self.max_row_width, len(self.last_row))
-            self.last_row = []
-            self.is_last_row_header = False
-        if tag == "table":
-            table = self.generate_table(self.rows)
-            self.tables.append(table)
-            self.rows = []
-        self.last_content = " "
-        self.active = None
-
-
-    def handle_data(self, data):
-        self.last_content += data
-
-    def generate_table(self, rows):
-        """
-        Generates from a list of rows a PrettyTable object.
-        """
-        table = PrettyTable(**self.kwargs)
-        for row in self.rows:
-            if len(row[0]) < self.max_row_width:
-                appends = self.max_row_width - len(row[0])
-                for i in range(1, appends):
-                    row[0].append("-")
-
-            if row[1] == True:
-                self.make_fields_unique(row[0])
-                table.field_names = row[0]
-            else:
-                table.add_row(row[0])
-        return table
-
-    def make_fields_unique(self, fields):
-        """
-        iterates over the row and make each field unique
-        """
-        for i in range(0, len(fields)):
-            for j in range(i + 1, len(fields)):
-                if fields[i] == fields[j]:
-                    fields[j] += "'"
-
-
-def from_html(html_code, **kwargs):
-    """
-    Generates a list of PrettyTables from a string of HTML code. Each <table> in
-    the HTML becomes one PrettyTable object.
-    """
-
-    parser = TableHandler(**kwargs)
-    parser.feed(html_code)
-    return parser.tables
-
-
-def from_html_one(html_code, **kwargs):
-    """
-    Generates a PrettyTables from a string of HTML code which contains only a
-    single <table>
-    """
-
-    tables = from_html(html_code, **kwargs)
-    try:
-        assert len(tables) == 1
-    except AssertionError:
-        raise Exception("More than one <table> in provided HTML code!  Use from_html instead.")
-    return tables[0]
-
-
-##############################
-# MAIN (TEST FUNCTION)       #
-##############################
-
-def main():
-    print("Generated using setters:")
-    x = PrettyTable(["City name", "Area", "Population", "Annual Rainfall"])
-    x.title = "Australian capital cities"
-    x.sortby = "Population"
-    x.reversesort = True
-    x.int_format["Area"] = "04"
-    x.float_format = "6.1"
-    x.align["City name"] = "l"  # Left align city names
-    x.add_row(["Adelaide", 1295, 1158259, 600.5])
-    x.add_row(["Brisbane", 5905, 1857594, 1146.4])
-    x.add_row(["Darwin", 112, 120900, 1714.7])
-    x.add_row(["Hobart", 1357, 205556, 619.5])
-    x.add_row(["Sydney", 2058, 4336374, 1214.8])
-    x.add_row(["Melbourne", 1566, 3806092, 646.9])
-    x.add_row(["Perth", 5386, 1554769, 869.4])
-    print(x)
-
-    print
-
-    print("Generated using constructor arguments:")
-
-    y = PrettyTable(["City name", "Area", "Population", "Annual Rainfall"],
-                    title="Australian capital cities",
-                    sortby="Population",
-                    reversesort=True,
-                    int_format="04",
-                    float_format="6.1",
-                    max_width=12,
-                    min_width=4,
-                    align="c",
-                    valign="t")
-    y.align["City name"] = "l"  # Left align city names
-    y.add_row(["Adelaide", 1295, 1158259, 600.5])
-    y.add_row(["Brisbane", 5905, 1857594, 1146.4])
-    y.add_row(["Darwin", 112, 120900, 1714.7])
-    y.add_row(["Hobart", 1357, 205556, 619.5])
-    y.add_row(["Sydney", 2058, 4336374, 1214.8])
-    y.add_row(["Melbourne", 1566, 3806092, 646.9])
-    y.add_row(["Perth", 5386, 1554769, 869.4])
-    print(y)
-
-
-if __name__ == "__main__":
-    main()
