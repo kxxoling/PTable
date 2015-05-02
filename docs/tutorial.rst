@@ -1,33 +1,12 @@
-===============
-PTable Tutorial
-===============
-
-PTable is a simple Python library designed to make it quick and easy to
-represent tabular data in visually appealing ASCII tables, originally
-forked from `PrettyTable <https://code.google.com/p/prettytable/>`_ .
-
-.. image:: https://travis-ci.org/kxxoling/PrettyTable.svg
-    :target: https://travis-ci.org/kxxoling/PrettyTable
-    :alt: Build Status
-
-.. image:: https://landscape.io/github/kxxoling/PTable/master/landscape.svg?style=flat
-    :target: https://landscape.io/github/kxxoling/PTable/master
-    :alt: Code Health
+========
+Tutorial
+========
 
 **This tutorial is distributed with PrettyTable and is meant to serve as
 a "quick start" guide for the lazy or impatient. It is not an exhaustive
 description of the whole API, and it is not guaranteed to be 100% up to
 date. For more complete and update documentation, check the PrettyTable
 wiki at http://code.google.com/p/prettytable/w/list**
-
-
-Links
-=====
-
-* `Source Code (GitHub) <https://github.com/kxxoling/PrettyTable>`_
-* `PyPI <https://pypi.python.org/pypi/ptabl://pypi.python.org/pypi/ptable>`_
-* `RTFD <https://ptable.readthedocs.org>`_
-
 
 Getting your data into (and out of) the table
 =============================================
