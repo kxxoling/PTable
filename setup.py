@@ -3,6 +3,11 @@ from setuptools import setup
 from prettytable import __version__ as version
 
 
+def fread(filepath):
+    with open(filepath, 'r') as f:
+        return f.read()
+
+
 setup(
     name='PTable',
     version=version,
@@ -25,11 +30,12 @@ setup(
     ],
     license="BSD (3 clause)",
     description='A simple Python library for easily displaying tabular data in a visually appealing ASCII table format',
+    long_description=fread('README.rst'),
     author='Luke Maurits',
     author_email='luke@maurits.id.au',
     maintainer='Kane Blueriver',
     maintainer_email='kxxoling@gmail.com',
-    url='http://code.google.com/p/prettytable',
+    url='https://github.com/kxxoling/PTable',
     py_modules=['prettytable', 'prettytable.cli', 'prettytable.prettytable',
                 'prettytable.factory', 'prettytable._compact'],
     test_suite="test_prettytable",
