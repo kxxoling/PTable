@@ -8,8 +8,8 @@ PTable is a simple Python library designed to make it quick and easy to
 represent tabular data in visually appealing ASCII tables, originally
 forked from `PrettyTable <https://code.google.com/p/prettytable/>`_ .
 
-.. image:: https://travis-ci.org/kxxoling/PrettyTable.svg
-    :target: https://travis-ci.org/kxxoling/PrettyTable
+.. image:: https://travis-ci.org/kxxoling/PTable.svg
+    :target: https://travis-ci.org/kxxoling/PTable
     :alt: Build Status
 
 .. image:: https://landscape.io/github/kxxoling/PTable/master/landscape.svg?style=flat
