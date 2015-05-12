@@ -5,9 +5,9 @@ import random
 import re
 import textwrap
 import unicodedata
-from _compact import py3k, itermap, uni_chr, escape
-from _compact import str_types
-from _compact import unicode_, basestring_
+from ._compact import py3k, itermap, uni_chr, escape
+from ._compact import str_types
+from ._compact import unicode_, basestring_
 
 
 # hrule styles

@@ -1,3 +1,7 @@
+########## PrettyTable 0.9 - May 1, 2015 ###########
+
+* Add command line tool ``ptable``. Usage: ``ptable --csv=filename``.
+
 ########## PrettyTable 0.8 - Oct XX, 2013 ###########
 
 * New "paginate" method can be used to produce strings suitable
