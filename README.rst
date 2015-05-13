@@ -14,6 +14,10 @@ forked from `PrettyTable <https://code.google.com/p/prettytable/>`_ .
     :target: https://landscape.io/github/kxxoling/PTable/master
     :alt: Code Health
 
+.. image:: https://pypip.in/download/PTable/badge.svg?period=week
+    :target: https://pypi.python.org/pypi/PTable/
+        :alt: Downloads
+
 **This tutorial is distributed with PrettyTable and is meant to serve as
 a "quick start" guide for the lazy or impatient. It is not an exhaustive
 description of the whole API, and it is not guaranteed to be 100% up to
