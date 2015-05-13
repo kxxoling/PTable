@@ -16,7 +16,7 @@ forked from `PrettyTable <https://code.google.com/p/prettytable/>`_ .
 
 .. image:: https://pypip.in/download/PTable/badge.svg?period=week
     :target: https://pypi.python.org/pypi/PTable/
-        :alt: Downloads
+    :alt: Downloads
 
 **This tutorial is distributed with PrettyTable and is meant to serve as
 a "quick start" guide for the lazy or impatient. It is not an exhaustive
