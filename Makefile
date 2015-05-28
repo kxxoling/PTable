@@ -3,6 +3,7 @@
 all: test
 
 test:
+	@nosetests
 
 clean: clean-pyc clean-build
 

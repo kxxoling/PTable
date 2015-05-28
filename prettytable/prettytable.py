@@ -29,7 +29,7 @@ def _get_size(text):
     lines = text.split("\n")
     height = len(lines)
     width = max([_str_block_width(line) for line in lines])
-    return (width, height)
+    return width, height
 
 
 class PrettyTable(object):
@@ -1390,7 +1390,7 @@ class PrettyTable(object):
         else:
             linebreak = "<br>"
 
-        open_tag = []
+        open_tag = list()
         open_tag.append("<table")
         if options["attributes"]:
             for attr_name in options["attributes"]:
@@ -1439,7 +1439,7 @@ class PrettyTable(object):
         else:
             linebreak = "<br>"
 
-        open_tag = []
+        open_tag = list()
         open_tag.append("<table")
         if options["border"]:
             if options["hrules"] == ALL and options["vrules"] == ALL:
@@ -1509,8 +1509,8 @@ class PrettyTable(object):
 
 def _char_block_width(char):
     # Basic Latin, which is probably the most common case
-    #if char in xrange(0x0021, 0x007e):
-    #if char >= 0x0021 and char <= 0x007e:
+    # if char in xrange(0x0021, 0x007e):
+    # if char >= 0x0021 and char <= 0x007e:
     if 0x0021 <= char <= 0x007e:
         return 1
     # Chinese, Japanese, Korean (common)
@@ -1543,4 +1543,3 @@ def _char_block_width(char):
 
 def _str_block_width(val):
     return sum(itermap(_char_block_width, itermap(ord, _re.sub("", val))))
-
