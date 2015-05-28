@@ -6,7 +6,7 @@ python:
   - "3.4"
 
 install:
-  - "pip install nosetests"
+  - "pip install nose"
 
 script: make test
 
