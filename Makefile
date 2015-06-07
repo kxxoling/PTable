@@ -23,6 +23,8 @@ clean-cover:
 
 coverage: #clean-cover
 	@nosetests --with-coverage --cover-package=$(PACKAGE_NAME) --cover-html --cover-html-dir=$(COVERAGE_DIR)
+
+opencover: test
 	@open $(COVERAGE_DIR)/index.html
 
 make-docs:
@@ -39,4 +41,4 @@ release: test
 	@python setup.py sdist upload -r pypi
 
 .PHONY: release clean clean-pyc develop install clean-build
-.PHONY: coverage clean-cover
+.PHONY: coverage clean-cover opencover
