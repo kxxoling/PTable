@@ -140,3 +140,35 @@ def from_html_one(html_code, **kwargs):
     except AssertionError:
         raise Exception("More than one <table> in provided HTML code!  Use from_html instead.")
     return tables[0]
+
+
+def from_md(md, **kwargs):
+    """
+    Generate PrettyTable from markdown string.
+    :param md: markdown type string.
+    :return: a PrettyTable object.
+    """
+    rows = md.split('\n')
+    title_row = rows[0]
+    content_rows = rows[2:]
+    table = PrettyTable(**kwargs)
+    table.field_names = split_md_row(title_row)
+    map(table.add_row, map(split_md_row,
+                           filter(lambda x: x, content_rows)))
+    return table
+
+def strip_md_content(s):
+    """
+    Strip the blank space and `:` in markdown table content cell.
+    :param s: a row of markdown table
+    :return: stripped content cell
+    """
+    return s.strip().strip(':').strip()
+
+def split_md_row(row):
+    """
+    Split markdown table.
+    :param row: a row of markdown table
+    :return: Split content list
+    """
+    return [strip_md_content(s) for s in row.strip('|').split('|')]
