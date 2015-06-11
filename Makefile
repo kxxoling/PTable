@@ -1,10 +1,13 @@
 .PHONY: all test
 COVERAGE_DIR = .cover
+COVER_PERC = 75
 PACKAGE_NAME = prettytable
 
-all: test
+all: coverage
 
-test: coverage
+test:
+	@nosetests
+	@nosetests --with-coverage --cover-min-percentage=$(COVER_PERC)
 
 clean: clean-pyc clean-build clean-cover
 
