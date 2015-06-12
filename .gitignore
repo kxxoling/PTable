@@ -19,3 +19,6 @@ dist
 *.pdf
 *.csv
 .tox
+
+.coverage
+.cover/*
