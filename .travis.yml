@@ -9,3 +9,6 @@ install:
     - "pip install -r req-dev.txt"
 
 script: make test
+
+after_success: coveralls
+
