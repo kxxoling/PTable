@@ -6,8 +6,7 @@ PACKAGE_NAME = prettytable
 all: coverage
 
 test:
-	@nosetests
-	@nosetests --with-coverage --cover-min-percentage=$(COVER_PERC)
+	@nosetests --with-coverage --cover-package=$(PACKAGE_NAME) --cover-min-percentage=$(COVER_PERC)
 
 clean: clean-pyc clean-build clean-cover
 
@@ -27,7 +26,7 @@ clean-cover:
 coverage: #clean-cover
 	@nosetests --with-coverage --cover-package=$(PACKAGE_NAME) --cover-html --cover-html-dir=$(COVERAGE_DIR)
 
-opencover: test
+opencover: coverage
 	@open $(COVERAGE_DIR)/index.html
 
 make-docs:
