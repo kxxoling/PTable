@@ -58,7 +58,7 @@ PTable library API is almost as PrettyTable, you can import the same API from
     from prettytable import PrettyTable
     x = PrettyTable()
 
-A better hosted document is hosted on `ReadTheDocument <http://ptable.readthedocs.org/?`_ .
+A better hosted document is hosted on `ReadTheDocument <http://ptable.readthedocs.org/>`_ .
 
 
 As command-line tool
