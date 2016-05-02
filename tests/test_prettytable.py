@@ -640,5 +640,33 @@ class PrintJapaneseTest(unittest.TestCase):
         print(self.x)
 
 
+class UnpaddedTableTest(unittest.TestCase):
+    def setUp(self):
+        self.x = PrettyTable(header=False, padding_width=0)
+        self.x.add_row("abc")
+        self.x.add_row("def")
+        self.x.add_row("g..")
+
+    def testUnbordered(self):
+        self.x.border = False
+        result = self.x.get_string()
+        assert result.strip() == """
+abc
+def
+g..
+""".strip()
+
+    def testBordered(self):
+        self.x.border = True
+        result = self.x.get_string()
+        assert result.strip() == """
++-+-+-+
+|a|b|c|
+|d|e|f|
+|g|.|.|
++-+-+-+
+""".strip()
+
+
 if __name__ == "__main__":
     unittest.main()
