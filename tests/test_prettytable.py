@@ -435,6 +435,55 @@ class BreakLineTests(unittest.TestCase):
 +------------+-------------+
 """.strip()
 
+    def testLongLineBreak(self):
+        t = PrettyTable(['Field 1', 'Field 2'])
+        t.add_row(['value 1', 'this is a really long-value2 in first row'])
+        t.add_row(['value 3', 'value4'])
+        t.max_table_width = 20
+        result = t.get_string(hrules=ALL)
+        expected = """
++----+-----------------+
+| Field 1 |     Field 2     |
++----+-----------------+
+| va |    this is a    |
+| lu |   really long-  |
+| e  | value2 in first |
+| 1  |       row       |
++----+-----------------+
+| va |      value4     |
+| lu |                 |
+| e  |                 |
+| 3  |                 |
++----+-----------------+
+"""
+        assert result.strip() == expected.strip()
+
+
+    def testLongLineBreakReactsOnOptions(self):
+        t = PrettyTable(['Field 1', 'Field 2'])
+        t.add_row(['value 1', 'this is a really long-value2 in first row'])
+        t.add_row(['value 3', 'value4'])
+        t.max_table_width = 20
+        t.wrap_opts = {'break_on_hyphens': False}
+        result = t.get_string(hrules=ALL)
+        expected = """
++----+-----------------+
+| Field 1 |     Field 2     |
++----+-----------------+
+| va |    this is a    |
+| lu |      really     |
+| e  |  long-value2 in |
+| 1  |    first row    |
++----+-----------------+
+| va |      value4     |
+| lu |                 |
+| e  |                 |
+| 3  |                 |
++----+-----------------+
+"""
+        assert result.strip() == expected.strip()
+
+
     def testHtmlBreakLine(self):
         t = PrettyTable(['Field 1', 'Field 2'])
         t.add_row(['value 1', 'value2\nsecond line'])

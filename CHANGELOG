@@ -1,3 +1,10 @@
+########## PrettyTable 0.10 - Unreleased ###########
+
+* New option `wrap_opts` was added. It's value is passed
+  as keyword arguments to `textwrap.fill` function.
+  Read `textwrap's` [documentation](https://docs.python.org/2/library/textwrap.html#textwrap.TextWrapper)
+  to figure out which options are available.
+
 ########## PrettyTable 0.9 - May 1, 2015 ###########
 
 * Add command line tool ``ptable``. Usage: ``ptable --csv=filename``.
