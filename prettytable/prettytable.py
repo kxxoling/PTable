@@ -469,7 +469,16 @@ class PrettyTable(object):
         Arguments:
 
         min_width - minimum width integer"""
-        return self._min_width
+        result = {
+            # minimum column width can't be lesser
+            # than header's length
+            name: max(
+                len(name),
+                self._min_width.get(name, 0)
+            )
+            for name in self._field_names
+        }
+        return result
 
     @min_width.setter
     def min_width(self, val):
@@ -1028,9 +1037,37 @@ class PrettyTable(object):
         if self._max_table_width:
             table_width = self._compute_table_width(options)
             if table_width > self._max_table_width:
+                # get dict with minimum widths for fields
+                min_width = self.min_width
+
+                # first calculate width for paddings and vrules this
+                # space we can't shrink.
+
+                # Space for vrules
+                nonshrinkable = 2 if options["vrules"] in (FRAME, ALL) else 0
+                # Space for vrules between columns
+                nonshrinkable += len(self._field_names) - 1
+                # Space for padding in each column
+                per_col_padding = sum(self._get_padding_widths(options))
+                nonshrinkable += len(widths) * per_col_padding
+                # Min space for each column
+                nonshrinkable += sum(min_width.values())
+
                 # Shrink widths in proportion
-                scale = 1.0 * self._max_table_width / table_width
-                widths = [int(math.floor(w * scale)) for w in widths]
+                scale = float(self._max_table_width - nonshrinkable) / (table_width - nonshrinkable)
+
+                def calculate_new_width(field_name, old_width):
+                    width = min_width[field_name]
+                    # scale according to recalculated table width
+                    scaled_part = int(math.floor((old_width - width) * scale))
+                    # enforce minimum column width as 1 symbol
+                    return max(1, width + scaled_part)
+
+                widths = list(map(
+                    calculate_new_width,
+                    self._field_names,
+                    widths
+                ))
                 self._widths = widths
 
         # Are we under min_table_width or title width?

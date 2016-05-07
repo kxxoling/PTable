@@ -1,3 +1,12 @@
+########## PrettyTable 0.10 - Unreleased ###########
+
+* Now column scaling algorithm more strictly respects "max_table_width"
+  setting.
+* Also, header's width was fixed in case when "max_table_width" was
+  given and calculated column's width lesser than this field name's
+  length. Now pretty table just sets minimum column width to the
+  width of it's name.
+
 ########## PrettyTable 0.9 - May 1, 2015 ###########
 
 * Add command line tool ``ptable``. Usage: ``ptable --csv=filename``.
