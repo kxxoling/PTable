@@ -1,8 +1,13 @@
 ## 0.10 - Unreleased
 
-* Now column scaling algorithm more strictly respects "max_table_width"
+* New option `wrap_opts` was added. It's value is passed
+  as keyword arguments to `textwrap.fill` function.
+  Read `textwrap's` [documentation](https://docs.python.org/2/library/textwrap.html#textwrap.TextWrapper)
+  to figure out which options are available.
+
+* Now column scaling algorithm more strictly respects ``max_table_width``
   setting.
-* Also, header's width was fixed in case when "max_table_width" was
+* Also, header's width was fixed in case when ``max_table_width`` was
   given and calculated column's width lesser than this field name's
   length. Now pretty table just sets minimum column width to the
   width of it's name.

@@ -435,12 +435,64 @@ class BreakLineTests(unittest.TestCase):
 +------------+-------------+
 """.strip()
 
-    def testHtmlBreakLine(self):
+    def testLongLineBreak(self):
+        t = PrettyTable(['F1', 'Field 2'])
+        t.add_row(['value 1', 'this is a really long-value2 in first row'])
+        t.add_row(['value 3', 'value4'])
+        t.max_table_width = 22
+        result = t.get_string(hrules=ALL)
+        expected = """
++----+--------------+
+| F1 |   Field 2    |
++----+--------------+
+| va |  this is a   |
+| lu | really long- |
+| e  |  value2 in   |
+| 1  |  first row   |
++----+--------------+
+| va |    value4    |
+| lu |              |
+| e  |              |
+| 3  |              |
++----+--------------+
+"""
+
+        import logging
+        logging.error(result.strip())
+        logging.error('expected.strip(): ')
+        logging.error(expected.strip())
+        self.assertEqual(result.strip(), expected.strip())
+
+    def testLongLineBreakReactsOnOptions(self):
+        t = PrettyTable(['F1', 'Field 2'])
+        t.add_row(['value 1', 'this is a really long-value2 in first row'])
+        t.add_row(['value 3', 'value4'])
+        t.max_table_width = 22
+        t.wrap_opts = {'break_on_hyphens': False}
+        result = t.get_string(hrules=ALL)
+        expected = """
++----+--------------+
+| F1 |   Field 2    |
++----+--------------+
+| va |  this is a   |
+| lu |    really    |
+| e  | long-value2  |
+| 1  | in first row |
++----+--------------+
+| va |    value4    |
+| lu |              |
+| e  |              |
+| 3  |              |
++----+--------------+
+"""
+        self.assertEqual(result.strip(), expected.strip())
+
+    def testHTMLBreakLine(self):
         t = PrettyTable(['Field 1', 'Field 2'])
         t.add_row(['value 1', 'value2\nsecond line'])
         t.add_row(['value 3', 'value4'])
         result = t.get_html_string(hrules=ALL)
-        assert result.strip() == """
+        self.assertEqual(result.strip(), """
 <table>
     <tr>
         <th>Field 1</th>
@@ -455,7 +507,7 @@ class BreakLineTests(unittest.TestCase):
         <td>value4</td>
     </tr>
 </table>
-""".strip()
+""".strip())
 
 
 class MaxMaxWidthsTests(unittest.TestCase):

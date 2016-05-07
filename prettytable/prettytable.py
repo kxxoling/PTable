@@ -75,6 +75,10 @@ class PrettyTable(object):
         self.valign = {}
         self.max_width = {}
         self.min_width = {}
+        # this dict contains options for textwrap's fill function
+        # for each field, ie:
+        # name -> {opts}
+        self.wrap_opts = {}
         self.int_format = {}
         self.float_format = {}
         if field_names:
@@ -259,6 +263,8 @@ class PrettyTable(object):
             self._validate_single_char(option, val)
         elif option == "attributes":
             self._validate_attributes(option, val)
+        elif option == "wrap_opts":
+            self._validate_dict_format(option, val)
 
     def _validate_field_names(self, val):
         # Check for appropriate length
@@ -309,6 +315,10 @@ class PrettyTable(object):
             assert val in (True, False)
         except AssertionError:
             raise Exception("Invalid value for %s!  Must be True or False." % name)
+
+    def _validate_dict_format(self, name, val):
+        if not isinstance(val, dict):
+            raise Exception("Invalid value for %s! Must be a dict." % name)
 
     def _validate_int_format(self, name, val):
         if val == "":
@@ -513,6 +523,24 @@ class PrettyTable(object):
     def max_table_width(self, val):
         self._validate_option("max_table_width", val)
         self._max_table_width = val
+
+    @property
+    def wrap_opts(self):
+        """Additional options for wrapping text in cells.
+
+        These options are passed as keyword arguments to the
+        textwrap.fill function.
+        """
+        return self._wrap_opts
+
+    @wrap_opts.setter
+    def wrap_opts(self, val):
+        if not val:
+            self._wrap_opts = {}
+        else:
+            self._validate_option('wrap_opts', val)
+            for field in self._field_names:
+                self._wrap_opts[field] = val
 
     @property
     def fields(self):
@@ -1312,7 +1340,11 @@ class PrettyTable(object):
             new_lines = []
             for line in lines:
                 if _str_block_width(line) > width:
-                    line = textwrap.fill(line, width)
+                    line = textwrap.fill(
+                        line,
+                        width,
+                        **self.wrap_opts.get(field, {})
+                    )
                 new_lines.append(line)
             lines = new_lines
             value = "\n".join(lines)
