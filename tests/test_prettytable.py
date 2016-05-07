@@ -458,6 +458,53 @@ class BreakLineTests(unittest.TestCase):
 """.strip()
 
 
+class MaxMaxWidthsTests(unittest.TestCase):
+    def testMaxTableWidthIsTheLaw(self):
+        max_width = 127
+        t = PrettyTable(max_table_width=max_width)
+        t.field_names = ['tag', 'versions']
+
+        versions = [
+            'python/django-appconf:1.0.1',
+            'python/django-braces:1.8.1',
+            'python/django-compressor:2.0',
+            'python/django-debug-toolbar:1.4',
+            'python/django-extensions:1.6.1',
+        ]
+        t.add_row(['allmychanges.com', ', '.join(versions)])
+        result = t.get_string(hrules=ALL)
+        lines = result.strip().split('\n')
+
+        for line in lines:
+            line_length = len(line)
+            self.assertEqual(line_length, max_width)
+
+
+    def testMaxTableWidthIsTheLawWhenMinColumnWidthSetForSomeColumns(self):
+        max_width = 40
+        t = PrettyTable(max_table_width=max_width)
+        t.field_names = ['tag', 'versions']
+        versions = [
+            'python/django-appconf:1.0.1',
+            'python/django-braces:1.8.1',
+            'python/django-compressor:2.0',
+            'python/django-debug-toolbar:1.4',
+            'python/django-extensions:1.6.1',
+        ]
+        t.add_row(['allmychanges.com', ', '.join(versions)])
+
+        # Now, we'll set min width for first column
+        # to not wrap it's content
+        t._min_width['tag'] = len('allmychanges.com')
+
+        result = t.get_string(hrules=ALL)
+        lines = result.strip().split('\n')
+
+        for line in lines:
+            line_length = len(line)
+            self.assertEqual(line_length, max_width)
+
+
 class HtmlOutputTests(unittest.TestCase):
     def testHtmlOutput(self):
         t = PrettyTable(['Field 1', 'Field 2', 'Field 3'])
