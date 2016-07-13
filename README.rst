@@ -14,7 +14,7 @@ forked from `PrettyTable <https://code.google.com/p/prettytable/>`_ .
     :target: https://landscape.io/github/kxxoling/PTable/master
     :alt: Code Health
 
-.. image:: https://pypip.in/download/PTable/badge.svg?period=week
+.. image:: https://img.shields.io/pypi/dm/PTable.svg?maxAge=2592000
     :target: https://pypi.python.org/pypi/PTable/
     :alt: Downloads
 
