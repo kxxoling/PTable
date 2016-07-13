@@ -472,14 +472,18 @@ class PrettyTable(object):
         Arguments:
 
         min_width - minimum width integer"""
+        if self.header:
+            fields = self._field_names
+        else:
+            fields = self._rows[0] if self._rows else []
         result = {
             # minimum column width can't be lesser
             # than header's length
             name: max(
-                len(name),
+                _str_block_width(unicode_(name)),
                 self._min_width.get(name, 0)
             )
-            for name in self._field_names
+            for name in fields
         }
         return result
 

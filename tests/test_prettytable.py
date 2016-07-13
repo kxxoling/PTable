@@ -697,22 +697,22 @@ class UnpaddedTableTest(unittest.TestCase):
     def testUnbordered(self):
         self.x.border = False
         result = self.x.get_string()
-        assert result.strip() == """
+        self.assertEqual(result.strip(), """
 abc
 def
 g..
-""".strip()
+""".strip())
 
     def testBordered(self):
         self.x.border = True
         result = self.x.get_string()
-        assert result.strip() == """
+        self.assertEqual(result.strip(), """
 +-+-+-+
 |a|b|c|
 |d|e|f|
 |g|.|.|
 +-+-+-+
-""".strip()
+""".strip())
 
 
 if __name__ == "__main__":
