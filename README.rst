@@ -14,6 +14,10 @@ forked from `PrettyTable <https://code.google.com/p/prettytable/>`_ .
     :target: https://landscape.io/github/kxxoling/PTable/master
     :alt: Code Health
 
+.. image:: https://coveralls.io/repos/github/kxxoling/PTable/badge.svg?branch=master
+    :target: https://coveralls.io/github/kxxoling/PTable?branch=master
+    :alt: Coverage
+
 .. image:: https://img.shields.io/pypi/dm/PTable.svg?maxAge=2592000
     :target: https://pypi.python.org/pypi/PTable/
     :alt: Downloads
