@@ -1452,14 +1452,17 @@ class PrettyTable(object):
 
         # Headers
         if options["header"]:
+            lines.append("<thead>")
             lines.append("    <tr>")
             for field in self._field_names:
                 if options["fields"] and field not in options["fields"]:
                     continue
                 lines.append("        <th>%s</th>" % escape(field).replace("\n", linebreak))
             lines.append("    </tr>")
+            lines.append("</thead>")
 
         # Data
+        lines.append("<tbody>")
         rows = self._get_rows(options)
         formatted_rows = self._format_rows(rows, options)
         for row in formatted_rows:
@@ -1469,7 +1472,7 @@ class PrettyTable(object):
                     continue
                 lines.append("        <td>%s</td>" % escape(datum).replace("\n", linebreak))
             lines.append("    </tr>")
-
+        lines.append("</tbody>")
         lines.append("</table>")
 
         return self._unicode("\n").join(lines)
@@ -1516,6 +1519,7 @@ class PrettyTable(object):
 
         # Headers
         if options["header"]:
+            lines.append("<thead>")
             lines.append("    <tr>")
             for field in self._field_names:
                 if options["fields"] and field not in options["fields"]:
@@ -1524,8 +1528,10 @@ class PrettyTable(object):
                     "        <th style=\"padding-left: %dem; padding-right: %dem; text-align: center\">%s</th>" % (
                     lpad, rpad, escape(field).replace("\n", linebreak)))
             lines.append("    </tr>")
+            lines.append("</thead>")
 
         # Data
+        lines.append("<tbody>")
         rows = self._get_rows(options)
         formatted_rows = self._format_rows(rows, options)
         aligns = []
@@ -1542,7 +1548,9 @@ class PrettyTable(object):
                     "        <td style=\"padding-left: %dem; padding-right: %dem; text-align: %s; vertical-align: %s\">%s</td>" % (
                     lpad, rpad, align, valign, escape(datum).replace("\n", linebreak)))
             lines.append("    </tr>")
+        lines.append("</tbody>")
         lines.append("</table>")
+
 
         return self._unicode("\n").join(lines)
 
