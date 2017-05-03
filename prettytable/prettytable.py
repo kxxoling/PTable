@@ -33,6 +33,16 @@ def _get_size(text):
 
 
 class PrettyTable(object):
+    OPTIONS = [
+        'align', 'attributes', 'border', 'end', 'fields', 'float_format',
+        'format', 'header', 'header_style', 'horizontal_char', 'hrules',
+        'int_format', 'junction_char', 'left_padding_width',
+        'max_table_width', 'max_width', 'min_table_width', 'min_width',
+        'oldsortslice', 'padding_width', 'print_empty', 'reversesort',
+        'right_padding_width', 'sort_key', 'sortby', 'start', 'title',
+        'valign', 'vertical_char', 'vrules', 'xhtml'
+    ]
+    
     def __init__(self, field_names=None, **kwargs):
 
         """Return a new PrettyTable instance
@@ -62,13 +72,16 @@ class PrettyTable(object):
         junction_char - single character string used to draw line junctions
         sortby - name of field to sort rows by
         sort_key - sorting key function, applied to data points before sorting
+        align - default align for each row
         valign - default valign for each row (None, "t", "m" or "b")
         reversesort - True or False to sort in descending or ascending order
         oldsortslice - Slice rows before sorting in the "old style" """
 
         self.encoding = kwargs.get("encoding", "UTF-8")
+        self._default_align = kwargs.get("align", "c")
 
-        # Data
+        # Some attributes must be set before argument validation occurs because
+        # some validation uses these fields.
         self._field_names = []
         self._rows = []
         self.align = {}
@@ -82,14 +95,8 @@ class PrettyTable(object):
         else:
             self._widths = []
 
-        # Options
-        self._options = "title start end fields header border sortby reversesort sort_key attributes format hrules vrules".split()
-        self._options.extend(
-            "int_format float_format min_table_width max_table_width padding_width left_padding_width right_padding_width".split())
-        self._options.extend(
-            "vertical_char horizontal_char junction_char header_style valign xhtml print_empty oldsortslice".split())
-        self._options.extend("align valign max_width min_width".split())
-        for option in self._options:
+        # Option validation
+        for option in PrettyTable.OPTIONS:
             if option in kwargs:
                 self._validate_option(option, kwargs[option])
             else:
@@ -198,9 +205,10 @@ class PrettyTable(object):
 
         new = PrettyTable()
         new.field_names = self.field_names
-        for attr in self._options:
+        for attr in PrettyTable.OPTIONS:
             setattr(new, "_" + attr, getattr(self, "_" + attr))
         setattr(new, "_align", getattr(self, "_align"))
+        setattr(new, "_default_align", getattr(self, "_default_align"))
         if isinstance(index, slice):
             for row in self._rows[index]:
                 new.add_row(row)
@@ -259,6 +267,10 @@ class PrettyTable(object):
             self._validate_single_char(option, val)
         elif option in ("attributes"):
             self._validate_attributes(option, val)
+        elif option in ("align"):
+            self._validate_align(val)
+        elif option in ("valign"):
+            self._validate_valign(val)
 
     def _validate_field_names(self, val):
         # Check for appropriate length
@@ -399,7 +411,7 @@ class PrettyTable(object):
                 if old_name not in self._align:
                     self._align.pop(old_name)
         else:
-            self.align = "c"
+            self.align = self._default_align
         if self._valign and old_names:
             for old_name, new_name in zip(old_names, val):
                 self._valign[new_name] = self._valign[old_name]
@@ -423,7 +435,7 @@ class PrettyTable(object):
             self._align = {}
         elif val is None or (isinstance(val, dict) and len(val) is 0):
             for field in self._field_names:
-                self._align[field] = "c"
+                self._align[field] = self._default_align
         else:
             self._validate_align(val)
             for field in self._field_names:
@@ -857,7 +869,7 @@ class PrettyTable(object):
     def _get_options(self, kwargs):
 
         options = {}
-        for option in self._options:
+        for option in PrettyTable.OPTIONS:
             if option in kwargs:
                 self._validate_option(option, kwargs[option])
                 options[option] = kwargs[option]
@@ -958,7 +970,7 @@ class PrettyTable(object):
             raise Exception("Cant delete row at index %d, table only has %d rows!" % (row_index, len(self._rows)))
         del self._rows[row_index]
 
-    def add_column(self, fieldname, column, align="c", valign="t"):
+    def add_column(self, fieldname, column, align=None, valign="t"):
 
         """Add a column to the table.
 
@@ -971,7 +983,11 @@ class PrettyTable(object):
         valign - desired vertical alignment for new columns - "t" for top, "m" for middle and "b" for bottom"""
 
         if len(self._rows) in (0, len(column)):
-            self._validate_align(align)
+            if align is None:
+                align = self._default_align
+            else:
+                self._validate_align(align)
+
             self._validate_valign(valign)
             self._field_names.append(fieldname)
             self._align[fieldname] = align
