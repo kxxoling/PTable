@@ -727,5 +727,20 @@ g..
 """.strip())
 
 
+class InitialOptionsPreservationTest(unittest.TestCase):
+    def setUp(self):
+        self.x = PrettyTable(align='l', header=False, padding_width=0)
+        self.x.add_row(["abc", "def", "ghi"])
+        self.x.add_row("jkl")
+
+    def testAlign(self):
+        result = self.x.get_string()
+        self.assertEqual(result.strip(), """
++---+---+---+
+|abc|def|ghi|
+|j  |k  |l  |
++---+---+---+
+""".strip())
+
 if __name__ == "__main__":
     unittest.main()
