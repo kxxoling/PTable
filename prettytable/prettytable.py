@@ -72,7 +72,7 @@ class PrettyTable(object):
         junction_char - single character string used to draw line junctions
         sortby - name of field to sort rows by
         sort_key - sorting key function, applied to data points before sorting
-        align - default align for each row (None, "l", "c", "r")
+        align - default align for each column (None, "l", "c", or "r"). If None, defaults to "c".
         valign - default valign for each row (None, "t", "m" or "b")
         reversesort - True or False to sort in descending or ascending order
         oldsortslice - Slice rows before sorting in the "old style" """
@@ -80,8 +80,7 @@ class PrettyTable(object):
         self.encoding = kwargs.get("encoding", "UTF-8")
         self._default_align = kwargs.get("align", "c")
 
-        # Some attributes must be set before argument validation occurs because
-        # some validation uses these fields.
+        # Data
         self._field_names = []
         self._rows = []
         self.align = {}
