@@ -72,7 +72,7 @@ class PrettyTable(object):
         junction_char - single character string used to draw line junctions
         sortby - name of field to sort rows by
         sort_key - sorting key function, applied to data points before sorting
-        align - default align for each row
+        align - default align for each row (None, "l", "c", "r")
         valign - default valign for each row (None, "t", "m" or "b")
         reversesort - True or False to sort in descending or ascending order
         oldsortslice - Slice rows before sorting in the "old style" """
@@ -208,7 +208,6 @@ class PrettyTable(object):
         for attr in PrettyTable.OPTIONS:
             setattr(new, "_" + attr, getattr(self, "_" + attr))
         setattr(new, "_align", getattr(self, "_align"))
-        setattr(new, "_default_align", getattr(self, "_default_align"))
         if isinstance(index, slice):
             for row in self._rows[index]:
                 new.add_row(row)

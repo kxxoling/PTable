@@ -733,8 +733,7 @@ class InitialOptionsPreservationTest(unittest.TestCase):
         self.x.add_row(["abc", "def", "ghi"])
         self.x.add_row("jkl")
 
-    def testBordered(self):
-        self.x.border = True
+    def testAlign(self):
         result = self.x.get_string()
         self.assertEqual(result.strip(), """
 +---+---+---+
