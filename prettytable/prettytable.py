@@ -1400,7 +1400,7 @@ class PrettyTable(object):
     # MARKDOWN TEXT STRING METHODS #
     ################################
 
-    def get_markdown(self, **kwargs):
+    def get_md_string(self, **kwargs):
 
         """Return string representation of table in markdown.
 
@@ -1424,7 +1424,7 @@ class PrettyTable(object):
         lines = self._prepare_lines(**kwargs)
         return self._unicode("\n").join(lines)
 
-    def get_rst(self, **kwargs):
+    def get_rst_string(self, **kwargs):
 
         """Return string representation of table in reStructuredText.
 

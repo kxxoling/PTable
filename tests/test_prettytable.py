@@ -734,7 +734,7 @@ class PrintMarkdownAndRstTest(unittest.TestCase):
         self.x.add_row(["aa", "bb", "cc"])
 
     def testMarkdownOutput(self):
-        result = self.x.get_markdown()
+        result = self.x.get_md_string()
         print()
         print(result)
         self.assertEqual(result.strip(), """
@@ -745,7 +745,7 @@ class PrintMarkdownAndRstTest(unittest.TestCase):
 """.strip())
 
     def testRstOutput(self):
-        result = self.x.get_rst()
+        result = self.x.get_rst_string()
         print()
         print(result)
         self.assertEqual(result.strip(), """
