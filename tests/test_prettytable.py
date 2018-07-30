@@ -727,5 +727,37 @@ g..
 """.strip())
 
 
+class PrintMarkdownAndRstTest(unittest.TestCase):
+    def setUp(self):
+        self.x = PrettyTable(["A", "B", "C"])
+        self.x.add_row(["a", "b", "c"])
+        self.x.add_row(["aa", "bb", "cc"])
+
+    def testMarkdownOutput(self):
+        result = self.x.get_md_string()
+        print()
+        print(result)
+        self.assertEqual(result.strip(), """
+| A  | B  | C  |
+|----|----|----|
+| a  | b  | c  |
+| aa | bb | cc |
+""".strip())
+
+    def testRstOutput(self):
+        result = self.x.get_rst_string()
+        print()
+        print(result)
+        self.assertEqual(result.strip(), """
++----+----+----+
+| A  | B  | C  |
++====+====+====+
+| a  | b  | c  |
++----+----+----+
+| aa | bb | cc |
++----+----+----+
+""".strip())
+
+
 if __name__ == "__main__":
     unittest.main()
