@@ -343,6 +343,16 @@ class IntegerFormatBasicTests(BasicTests):
         BasicTests.setUp(self)
         self.x.int_format = "04"
 
+class DelColumnTests(CityDataTest):
+    """Test del_column function"""
+    def testDelColumn(self):
+        self.x.del_column(3)
+        self.assertTrue(["City name", "Area", "Population"] == self.x.field_names)
+        string = self.x.get_string()
+        assert "600.5" not in string
+        assert "1146.4" not in string
+        assert "112" in string
+        assert "1714.7" not in string
 
 class FloatFormatBasicTests(BasicTests):
     """Run the basic tests after setting a float format string"""

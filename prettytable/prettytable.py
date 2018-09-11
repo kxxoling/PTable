@@ -957,7 +957,19 @@ class PrettyTable(object):
         if row_index > len(self._rows) - 1:
             raise Exception("Cant delete row at index %d, table only has %d rows!" % (row_index, len(self._rows)))
         del self._rows[row_index]
-
+        
+    def del_column(self, column_index):
+        """Delete a column to the table
+        
+        Arguments:
+        column_index - The index of the column you want to delete. Indexing starts at 0."""
+        
+        if column_index > len(self._field_names) - 1:
+            raise Exception("Cant delete column at index %d, table only has %d columns!" % (column_index, len(self._field_names)))
+        else:
+            self._field_names.pop(column_index)
+            self._rows = [row[:column_index] + row[column_index+1:] for row in self._rows]
+            
     def add_column(self, fieldname, column, align="c", valign="t"):
 
         """Add a column to the table.
