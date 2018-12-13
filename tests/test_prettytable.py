@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# coding=UTF-8
+#  -*- coding: utf-8 -*-
 
 from prettytable import PrettyTable
 from prettytable import ALL, HEADER, FRAME, MSWORD_FRIENDLY, NONE, UNICODE
@@ -769,7 +769,7 @@ class UnicodeStyleTest(unittest.TestCase):
         self.x.set_style(UNICODE)
         print()
         print(self.x)
-        self.assertEqual(self.x.get_string().strip(), """
+        self.assertEqual(self.x.get_string().strip(), u"""
 ┌────┬────┬────┐
 │ A  │ B  │ C  │
 ├────┼────┼────┤
@@ -784,7 +784,7 @@ class UnicodeStyleTest(unittest.TestCase):
         self.x.border = False
         print()
         print(self.x)
-        self.assertEqual(self.x.get_string().strip(), """
+        self.assertEqual(self.x.get_string().strip(), u"""
  A   B   C  \n\
  a   b   c  \n\
  aa  bb  cc \n\
@@ -796,7 +796,7 @@ class UnicodeStyleTest(unittest.TestCase):
         self.x.hrules = FRAME
         print()
         print(self.x)
-        self.assertEqual(self.x.get_string().strip(), """
+        self.assertEqual(self.x.get_string().strip(), u"""
 ┌────┬────┬────┐
 │ A  │ B  │ C  │
 ├────┼────┼────┤
@@ -810,7 +810,7 @@ class UnicodeStyleTest(unittest.TestCase):
         self.x.hrules = HEADER
         print()
         print(self.x)
-        self.assertEqual(self.x.get_string().strip(), """
+        self.assertEqual(self.x.get_string().strip(), u"""
 │ A  │ B  │ C  │
 ├────┼────┼────┤
 │ a  │ b  │ c  │
@@ -822,7 +822,7 @@ class UnicodeStyleTest(unittest.TestCase):
         self.x.hrules = NONE
         print()
         print(self.x)
-        self.assertEqual(self.x.get_string().strip(), """
+        self.assertEqual(self.x.get_string().strip(), u"""
 │ A  │ B  │ C  │
 │ a  │ b  │ c  │
 │ aa │ bb │ cc │
@@ -833,7 +833,7 @@ class UnicodeStyleTest(unittest.TestCase):
         self.x.vrules = NONE
         print()
         print(self.x)
-        self.assertEqual(self.x.get_string().strip(), """
+        self.assertEqual(self.x.get_string().strip(), u"""
 ────────────────
   A    B    C   \n\
 ────────────────
@@ -849,7 +849,7 @@ class UnicodeStyleTest(unittest.TestCase):
         self.x.vrules = FRAME
         print()
         print(self.x)
-        self.assertEqual(self.x.get_string().strip(), """
+        self.assertEqual(self.x.get_string().strip(), u"""
 ┌──────────────┐
 │ A    B    C  │
 ├──────────────┤
@@ -864,7 +864,7 @@ class UnicodeStyleTest(unittest.TestCase):
         self.x.header = False
         print()
         print(self.x)
-        self.assertEqual(self.x.get_string().strip(), """
+        self.assertEqual(self.x.get_string().strip(), u"""
 ┌────┬────┬────┐
 │ a  │ b  │ c  │
 ├────┼────┼────┤
