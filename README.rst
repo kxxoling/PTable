@@ -1,40 +1,40 @@
 ============
-About PTable
+About ptable
 ============
 
-PTable is a simple Python library designed to make it quick and easy to
+ptable is a simple Python library designed to make it quick and easy to
 represent tabular data in visually appealing ASCII tables, originally
 forked from `PrettyTable <https://code.google.com/p/prettytable/>`_.
 
-.. image:: https://travis-ci.org/kxxoling/PTable.svg
-    :target: https://travis-ci.org/kxxoling/PTable
+.. image:: https://travis-ci.org/kxxoling/ptable.svg
+    :target: https://travis-ci.org/kxxoling/ptable
     :alt: Build Status
 
-.. image:: https://landscape.io/github/kxxoling/PTable/master/landscape.svg?style=flat
-    :target: https://landscape.io/github/kxxoling/PTable/master
+.. image:: https://landscape.io/github/kxxoling/ptable/master/landscape.svg?style=flat
+    :target: https://landscape.io/github/kxxoling/ptable/master
     :alt: Code Health
 
-.. image:: https://coveralls.io/repos/github/kxxoling/PTable/badge.svg?branch=master
-    :target: https://coveralls.io/github/kxxoling/PTable?branch=master
+.. image:: https://coveralls.io/repos/github/kxxoling/ptable/badge.svg?branch=master
+    :target: https://coveralls.io/github/kxxoling/ptable?branch=master
     :alt: Coverage
 
 
 Installation
 ============
 
-As PTable is a fork of PrettyTable, and compatible with all its APIs,
-so PTable is usage is the same as PrettyTable, and the installation
+As ptable is a fork of PrettyTable, and compatible with all its APIs,
+so ptable is usage is the same as PrettyTable, and the installation
 would cover on the original PrettyTable.
 
-As always, you can install PTable in 3 ways.
+As always, you can install ptable in 3 ways.
 
 Via pip (recommend)::
 
-    pip install PTable
+    pip install ptable
 
 Via easy_install::
 
-    easy_install PTable
+    easy_install ptable
 
 From source::
 
@@ -44,13 +44,13 @@ From source::
 Quick start
 ===========
 
-PTable supports two kinds of usage:
+ptable supports two kinds of usage:
 
 
 As a library
 ------------
 
-PTable library API is almost as PrettyTable, you can import the same API from
+ptable library API is almost as PrettyTable, you can import the same API from
 ``prettytable`` library:
 
 .. code-block:: python
@@ -64,7 +64,7 @@ A better hosted document is hosted on `ReadTheDocument <http://ptable.readthedoc
 As command-line tool
 --------------------
 
-This is an original function of PTable, can be used as ``ptable`` command:
+This is an original function of ptable, can be used as ``ptable`` command:
 
 .. code-block:: shell
 
