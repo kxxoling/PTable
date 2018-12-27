@@ -1,24 +1,26 @@
 language: python
-
 matrix:
   include:
-  - python: "2.7"
-  - python: "3.4"
-  - python: "3.5"
-  - python: "3.6"
-  - python: "3.7"
+  - python: '2.7'
+  - python: '3.4'
+  - python: '3.5'
+  - python: '3.6'
+  - python: '3.7'
     dist: xenial
     sudo: required
-
 install:
-    - "pip install -r req-dev.txt"
-    - "pip install flake8"
-
+- pip install -r req-dev.txt
+- pip install flake8
 before_script:
-    # stop the build if there are Python syntax errors or undefined names
-    - time flake8 . --count --exclude=_compact.py --select=E901,E999,F821,F822,F823 --show-source --statistics
-    # exit-zero treats all errors as warnings.  The GitHub editor is 127 chars wide
-    - time flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-
+- time flake8 . --count --exclude=_compact.py --select=E901,E999,F821,F822,F823 --show-source
+  --statistics
+- time flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 script: make test
 after_success: coveralls
+deploy:
+  provider: pypi
+  user: thibdct
+  password:
+    secure: SAVNEMbrG4sIW4l3JcRv+nsiDygazwAw7oaU+fsSUxODvu+ekS+6HUGykQnHZabBVN9qy0y47tXjubkmpnSWP/jbFaz1uwo07mE5mlcGUOxIpkoYsbFoig7hYOjGCv02Eo/FJ7CXWXLgj9FR9gdoSPwxUdIf0TmXQfG5klQH/4piUNx/i05aqFT212Lp19byGUDuLaEsTHwbzuov5XJ6bSyN8P0ZIEU7edTUIlZGP89PJonC7Uzo+hCyfqf5YgFAC182GgnI5sR4jQ/divygaX2fGyfTLTYY8BbFCwfuEKTjE1gGdoKeAFNl21MgZxPT5dWIkZNePOIZY37TctDvM85tAIW68kF9wFxR6GfdUUlGc3HLdUrAkzdl2Sq2xy5xJ9qnb3DalqGLex+qnqEE9gQLqyfLXPcO0aJ58ZpPgzshKLjo+aQzMzRmYXND5SZ9DEDBC0dtMv1XNEnCrTF9tZMvCGdy73ZEeoT8UiZWnOSCmLXa4FMN9Q1Hh2hzAvmi/qydHXI1t8h/y3VJBkWtOM8bIa5FnQ0iOGyzMgpUWSZtlQ7uoHp8x7xwKOGwj9EjrMY4avRdtKIvMHuqiyuxQIPogTQeVG1Hz9gt2z3yoxsRYB8YD8OXC6z5Go0m40pd4oqPvfFKkFts96OPJShoqw3rOgMmKR3E7PSBxdPkpnU=
+  on:
+    tags: true
