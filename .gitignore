@@ -22,3 +22,6 @@ dist
 
 .coverage
 .cover/*
+
+.pytest_cache/
+venv/

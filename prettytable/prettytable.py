@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+#  -*- coding: utf-8 -*-
 import copy
 import math
 import random
@@ -21,6 +22,7 @@ DEFAULT = 10
 MSWORD_FRIENDLY = 11
 PLAIN_COLUMNS = 12
 RANDOM = 20
+UNICODE = 30
 
 _re = re.compile("\033\[[0-9;]*m")
 
@@ -60,6 +62,14 @@ class PrettyTable(object):
         vertical_char - single character string used to draw vertical lines
         horizontal_char - single character string used to draw horizontal lines
         junction_char - single character string used to draw line junctions
+        left_junction_char - single character string used to draw line junctions (left part)
+        right_junction_char - single character string used to draw line junctions (right part)
+        upper_junction_char - single character string used to draw line junctions (upper part)
+        bottom_junction_char - single character string used to draw line junctions (bottom part)
+        upper_left_corner_char - single character string used to draw the upper left corner
+        bottom_left_corner_char - single character string used to draw the bottom left corner
+        upper_right_corner_char - single character string used to draw the upper right corner
+        bottom_right_corner_char - single character string used to draw the bottom right corner
         sortby - name of field to sort rows by
         sort_key - sorting key function, applied to data points before sorting
         valign - default valign for each row (None, "t", "m" or "b")
@@ -83,11 +93,20 @@ class PrettyTable(object):
             self._widths = []
 
         # Options
-        self._options = "title start end fields header border sortby reversesort sort_key attributes format hrules vrules".split()
+        self._options = "title start end fields header border sortby \
+        reversesort sort_key attributes format hrules vrules".split()
         self._options.extend(
-            "int_format float_format min_table_width max_table_width padding_width left_padding_width right_padding_width".split())
+            "int_format float_format min_table_width max_table_width \
+            padding_width left_padding_width right_padding_width".split())
         self._options.extend(
-            "vertical_char horizontal_char junction_char header_style valign xhtml print_empty oldsortslice".split())
+            "vertical_char horizontal_char junction_char header_style valign \
+            xhtml print_empty oldsortslice".split())
+        self._options.extend(
+            "left_junction_char right_junction_char upper_junction_char \
+            bottom_junction_char".split())
+        self._options.extend(
+            "upper_left_corner_char upper_right_corner_char \
+            bottom_left_corner_char bottom_right_corner_char".split())
         self._options.extend("align valign max_width min_width".split())
         for option in self._options:
             if option in kwargs:
@@ -139,6 +158,17 @@ class PrettyTable(object):
         self._vertical_char = kwargs["vertical_char"] or self._unicode("|")
         self._horizontal_char = kwargs["horizontal_char"] or self._unicode("-")
         self._junction_char = kwargs["junction_char"] or self._unicode("+")
+        self._left_junction_char = kwargs["left_junction_char"] or None
+        self._right_junction_char = kwargs["right_junction_char"] or None
+        self._upper_junction_char = kwargs["upper_junction_char"] or None
+        self._bottom_junction_char = kwargs["bottom_junction_char"] or None
+        self._upper_left_corner_char = kwargs["upper_left_corner_char"] or None
+        self._upper_right_corner_char = kwargs["upper_right_corner_char"] \
+            or None
+        self._bottom_left_corner_char = kwargs["bottom_left_corner_char"] \
+            or None
+        self._bottom_right_corner_char = kwargs["bottom_right_corner_char"] \
+            or None
 
         if kwargs["print_empty"] in (True, False):
             self._print_empty = kwargs["print_empty"]
@@ -255,7 +285,11 @@ class PrettyTable(object):
             self._validate_int_format(option, val)
         elif option in ("float_format"):
             self._validate_float_format(option, val)
-        elif option in ("vertical_char", "horizontal_char", "junction_char"):
+        elif option in ("vertical_char", "horizontal_char", "junction_char",
+                        "left_junction_char", "right_junction_char",
+                        "upper_junction_char", "bottom_junction_char",
+                        "upper_left_corner_char", "upper_right_corner_char",
+                        "bottom_left_corner_char", "bottom_right_corner_char"):
             self._validate_single_char(option, val)
         elif option in ("attributes"):
             self._validate_attributes(option, val)
@@ -755,7 +789,7 @@ class PrettyTable(object):
 
     @property
     def vertical_char(self):
-        """The charcter used when printing table borders to draw vertical lines
+        """The character used when printing table borders to draw vertical lines
 
         Arguments:
 
@@ -770,11 +804,12 @@ class PrettyTable(object):
 
     @property
     def horizontal_char(self):
-        """The charcter used when printing table borders to draw horizontal lines
+        """The character used when printing table borders to draw horizontal lines
 
         Arguments:
 
-        horizontal_char - single character string used to draw horizontal lines"""
+        horizontal_char - single character string used to draw horizontal lines
+        """
         return self._horizontal_char
 
     @horizontal_char.setter
@@ -785,7 +820,7 @@ class PrettyTable(object):
 
     @property
     def junction_char(self):
-        """The charcter used when printing table borders to draw line junctions
+        """The character used when printing table borders to draw line junctions
 
         Arguments:
 
@@ -795,8 +830,136 @@ class PrettyTable(object):
     @junction_char.setter
     def junction_char(self, val):
         val = self._unicode(val)
-        self._validate_option("vertical_char", val)
+        self._validate_option("junction_char", val)
         self._junction_char = val
+
+    @property
+    def left_junction_char(self):
+        """The character used when printing table borders to draw line junctions
+
+        Arguments:
+
+        left_junction_char - single character string used to draw line \
+junctions (left part) """
+        return self._left_junction_char
+
+    @left_junction_char.setter
+    def left_junction_char(self, val):
+        val = self._unicode(val)
+        self._validate_option("left_junction_char", val)
+        self._left_junction_char = val
+
+    @property
+    def right_junction_char(self):
+        """The character used when printing table borders to draw line junctions
+
+        Arguments:
+
+        right_junction_char - single character string used to draw line \
+junctions (right part)"""
+        return self._right_junction_char
+
+    @right_junction_char.setter
+    def right_junction_char(self, val):
+        val = self._unicode(val)
+        self._validate_option("right_junction_char", val)
+        self._right_junction_char = val
+
+    @property
+    def bottom_junction_char(self):
+        """The character used when printing table borders to draw line junctions
+
+        Arguments:
+
+        bottom_junction_char - single character string used to draw line \
+junctions (bottom part)"""
+        return self._bottom_junction_char
+
+    @bottom_junction_char.setter
+    def bottom_junction_char(self, val):
+        val = self._unicode(val)
+        self._validate_option("bottom_junction_char", val)
+        self._bottom_junction_char = val
+
+    @property
+    def upper_junction_char(self):
+        """The character used when printing table borders to draw line junctions
+
+        Arguments:
+
+        upper_junction_char - single character string used to draw line \
+junctions (upper part) """
+        return self._upper_junction_char
+
+    @upper_junction_char.setter
+    def upper_junction_char(self, val):
+        val = self._unicode(val)
+        self._validate_option("upper_junction_char", val)
+        self._upper_junction_char = val
+
+    @property
+    def upper_left_corner_char(self):
+        """The character used when printing table borders to draw corner
+
+        Arguments:
+
+        upper_left_corner_char - single character string used to draw corner \
+(upper left)"""
+        return self._upper_left_corner_char
+
+    @upper_left_corner_char.setter
+    def upper_left_corner_char(self, val):
+        val = self._unicode(val)
+        self._validate_option("upper_left_corner_char", val)
+        self._upper_left_corner_char = val
+
+    @property
+    def upper_right_corner_char(self):
+        """The character used when printing table borders to draw corner
+
+        Arguments:
+
+        upper_right_corner_char - single character string used to draw corner \
+(upper right)"""
+        return self._upper_right_corner_char
+
+    @upper_right_corner_char.setter
+    def upper_right_corner_char(self, val):
+        val = self._unicode(val)
+        self._validate_option("upper_right_corner_char", val)
+        self._upper_right_corner_char = val
+
+    @property
+    def bottom_left_corner_char(self):
+        """The character used when printing table borders to draw corner
+
+        Arguments:
+
+        bottom_left_corner_char - single character string used to draw corner \
+(upper left)"""
+        return self._bottom_left_corner_char
+
+    @bottom_left_corner_char.setter
+    def bottom_left_corner_char(self, val):
+        val = self._unicode(val)
+        self._validate_option("bottom_left_corner_char", val)
+        self._bottom_left_corner_char = val
+
+    @property
+    def bottom_right_corner_char(self):
+        """The character used when printing table borders to draw corner
+
+        Arguments:
+
+        bottom_right_corner_char - single character string used to draw \
+corner (upper right)"""
+        return self._bottom_right_corner_char
+
+    @bottom_right_corner_char.setter
+    def bottom_right_corner_char(self, val):
+        val = self._unicode(val)
+        self._validate_option("bottom_right_corner_char", val)
+        self._bottom_right_corner_char = val
 
     @property
     def format(self):
@@ -879,6 +1042,8 @@ class PrettyTable(object):
             self._set_columns_style()
         elif style == RANDOM:
             self._set_random_style()
+        elif style == UNICODE:
+            self._set_unicode_style()
         else:
             raise Exception("Invalid pre-set style!")
 
@@ -925,6 +1090,28 @@ class PrettyTable(object):
         self.vertical_char = random.choice("~!@#$%^&*()_+|-=\{}[];':\",./;<>?")
         self.horizontal_char = random.choice("~!@#$%^&*()_+|-=\{}[];':\",./;<>?")
         self.junction_char = random.choice("~!@#$%^&*()_+|-=\{}[];':\",./;<>?")
+
+    def _set_unicode_style(self):
+
+        # Unicode style
+        self.header = True
+        self.border = True
+        self._hrules = ALL
+        self._vrules = ALL
+        self.padding_width = 1
+        self.left_padding_width = 1
+        self.right_padding_width = 1
+        self.vertical_char = "│"
+        self.horizontal_char = "─"
+        self.junction_char = "┼"
+        self.left_junction_char = "├"
+        self.right_junction_char = "┤"
+        self.upper_junction_char = "┬"
+        self.bottom_junction_char = "┴"
+        self.upper_left_corner_char = "┌"
+        self.upper_right_corner_char = "┐"
+        self.bottom_left_corner_char = "└"
+        self.bottom_right_corner_char = "┘"
 
     ##############################
     # DATA INPUT METHODS         #
@@ -1140,6 +1327,21 @@ class PrettyTable(object):
     def _format_rows(self, rows, options):
         return [self._format_row(row, options) for row in rows]
 
+    def _modify_line(self, line, left_corner, right_corner,
+                     old_junction_char, new_junction_char):
+        """ Change specific characters in a line (corners, and junction_char)
+        """
+        line_list = list(line)
+        # We cannot set line[0] if line is from `str` type
+        if left_corner:
+            line_list[0] = left_corner
+        if right_corner:
+            line_list[-1] = right_corner
+        line = ''.join(line_list)
+        if new_junction_char:
+            line = line.replace(old_junction_char, new_junction_char)
+        return line
+
     ##############################
     # PLAIN TEXT STRING METHODS  #
     ##############################
@@ -1178,7 +1380,13 @@ class PrettyTable(object):
         if options["header"]:
             lines.extend(self._stringify_header(options).split('\n'))
         elif options["border"] and options["hrules"] in (ALL, FRAME):
-            lines.append(self._hrule)
+            first_line = self._modify_line(
+                line=self._hrule,
+                left_corner=options["upper_left_corner_char"],
+                right_corner=options["upper_right_corner_char"],
+                old_junction_char=options["junction_char"],
+                new_junction_char=options["upper_junction_char"])
+            lines.append(first_line)
 
         # Add rows
         for row in formatted_rows:
@@ -1186,7 +1394,32 @@ class PrettyTable(object):
 
         # Add bottom of border
         if options["border"] and options["hrules"] == FRAME:
-            lines.append(self._hrule)
+            last_line = self._modify_line(
+                line=self._hrule,
+                left_corner=options["bottom_left_corner_char"],
+                right_corner=options["bottom_right_corner_char"],
+                old_junction_char=options["junction_char"],
+                new_junction_char=options["bottom_junction_char"])
+            lines.append(last_line)
+
+        if options["border"] and options["vrules"] in (ALL, FRAME) \
+                and options["hrules"] == ALL:
+            # Extract
+            last_row = lines[-1]
+            # last row contains both values and bottom border
+            # we only need to modify the bottom border
+            last_row_list = last_row.split('\n')
+            bottom_border = last_row_list[-1]
+            lines = lines[:-1]  # Remove last row (to rebuild it properly)
+            bottom_border = self._modify_line(
+                line=bottom_border,
+                left_corner=options["bottom_left_corner_char"],
+                right_corner=options["bottom_right_corner_char"],
+                old_junction_char=options["junction_char"],
+                new_junction_char=options["bottom_junction_char"])
+            last_row_list[-1] = bottom_border
+            last_row = "\n".join(last_row_list)
+            lines.append(last_row)
         return lines
 
     def get_string(self, **kwargs):
@@ -1224,24 +1457,35 @@ class PrettyTable(object):
             return ""
         lpad, rpad = self._get_padding_widths(options)
         if options['vrules'] in (ALL, FRAME):
-            bits = [options["junction_char"]]
+            if options["left_junction_char"] != None:
+                bits = [options["left_junction_char"]]
+            else:
+                bits = [options["junction_char"]]
         else:
             bits = [options["horizontal_char"]]
         # For tables with no data or fieldnames
         if not self._field_names:
             bits.append(options["junction_char"])
             return "".join(bits)
+
         for field, width in zip(self._field_names, self._widths):
             if options["fields"] and field not in options["fields"]:
                 continue
             bits.append((width + lpad + rpad) * options["horizontal_char"])
             if options['vrules'] == ALL:
-                bits.append(options["junction_char"])
+                    bits.append(options["junction_char"])
             else:
                 bits.append(options["horizontal_char"])
+        if options["vrules"] == ALL:
+            if options["right_junction_char"] != None:
+                bits.pop()
+                bits.append(options["right_junction_char"])
         if options["vrules"] == FRAME:
             bits.pop()
-            bits.append(options["junction_char"])
+            if options["right_junction_char"] != None:
+                bits.append(options["right_junction_char"])
+            else:
+                bits.append(options["junction_char"])
         return "".join(bits)
 
     def _stringify_title(self, title, options):
@@ -1270,7 +1514,16 @@ class PrettyTable(object):
         lpad, rpad = self._get_padding_widths(options)
         if options["border"]:
             if options["hrules"] in (ALL, FRAME):
-                bits.append(self._hrule)
+                if options["vrules"] != NONE:
+                    first_line = self._modify_line(
+                        line=self._hrule,
+                        left_corner=options["upper_left_corner_char"],
+                        right_corner=options["upper_right_corner_char"],
+                        old_junction_char=options["junction_char"],
+                        new_junction_char=options["upper_junction_char"])
+                    bits.append(first_line)
+                else:
+                    bits.append(self._hrule)
                 bits.append("\n")
             if options["vrules"] in (ALL, FRAME):
                 bits.append(options["vertical_char"])

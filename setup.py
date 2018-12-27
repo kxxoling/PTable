@@ -9,7 +9,7 @@ def fread(filepath):
 
 
 setup(
-    name='PTable',
+    name='PTableUnicode',
     version=version,
     include_package_data=True,
     zip_safe=False,
@@ -38,7 +38,7 @@ setup(
     author_email='luke@maurits.id.au',
     maintainer='Kane Blueriver',
     maintainer_email='kxxoling@gmail.com',
-    url='https://github.com/kxxoling/PTable',
+    url='https://github.com/tducret/PTable',
     py_modules=['prettytable', 'prettytable.cli', 'prettytable.prettytable',
                 'prettytable.factory', 'prettytable._compact'],
     test_suite="test_prettytable",

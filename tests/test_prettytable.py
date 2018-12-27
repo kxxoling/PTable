@@ -1,8 +1,8 @@
 #!/usr/bin/env python
-# coding=UTF-8
+#  -*- coding: utf-8 -*-
 
 from prettytable import PrettyTable
-from prettytable import ALL, HEADER, MSWORD_FRIENDLY, NONE
+from prettytable import ALL, HEADER, FRAME, MSWORD_FRIENDLY, NONE, UNICODE
 from prettytable import from_csv, from_db_cursor, from_html, from_html_one
 
 from prettytable._compact import StringIO
@@ -756,6 +756,120 @@ class PrintMarkdownAndRstTest(unittest.TestCase):
 +----+----+----+
 | aa | bb | cc |
 +----+----+----+
+""".strip())
+
+
+class UnicodeStyleTest(unittest.TestCase):
+    def setUp(self):
+        self.x = PrettyTable(["A", "B", "C"])
+        self.x.add_row(["a", "b", "c"])
+        self.x.add_row(["aa", "bb", "cc"])
+
+    def testUnicodeStyle(self):
+        self.x.set_style(UNICODE)
+        print()
+        print(self.x)
+        self.assertEqual(self.x.get_string().strip(), u"""
+┌────┬────┬────┐
+│ A  │ B  │ C  │
+├────┼────┼────┤
+│ a  │ b  │ c  │
+├────┼────┼────┤
+│ aa │ bb │ cc │
+└────┴────┴────┘
+""".strip())
+
+    def testUnicodeStyleNoBorder(self):
+        self.x.set_style(UNICODE)
+        self.x.border = False
+        print()
+        print(self.x)
+        self.assertEqual(self.x.get_string().strip(), u"""
+ A   B   C  \n\
+ a   b   c  \n\
+ aa  bb  cc \n\
+""".strip())  # I have to put '\n\' because my trailing spaces are deleted
+        # by my editor otherwise, and the test would fail.
+
+    def testUnicodeStyleHruleFrame(self):
+        self.x.set_style(UNICODE)
+        self.x.hrules = FRAME
+        print()
+        print(self.x)
+        self.assertEqual(self.x.get_string().strip(), u"""
+┌────┬────┬────┐
+│ A  │ B  │ C  │
+├────┼────┼────┤
+│ a  │ b  │ c  │
+│ aa │ bb │ cc │
+└────┴────┴────┘
+""".strip())
+
+    def testUnicodeStyleHruleHeader(self):
+        self.x.set_style(UNICODE)
+        self.x.hrules = HEADER
+        print()
+        print(self.x)
+        self.assertEqual(self.x.get_string().strip(), u"""
+│ A  │ B  │ C  │
+├────┼────┼────┤
+│ a  │ b  │ c  │
+│ aa │ bb │ cc │
+""".strip())
+
+    def testUnicodeStyleHruleNone(self):
+        self.x.set_style(UNICODE)
+        self.x.hrules = NONE
+        print()
+        print(self.x)
+        self.assertEqual(self.x.get_string().strip(), u"""
+│ A  │ B  │ C  │
+│ a  │ b  │ c  │
+│ aa │ bb │ cc │
+""".strip())
+
+    def testUnicodeStyleVruleNone(self):
+        self.x.set_style(UNICODE)
+        self.x.vrules = NONE
+        print()
+        print(self.x)
+        self.assertEqual(self.x.get_string().strip(), u"""
+────────────────
+  A    B    C   \n\
+────────────────
+  a    b    c   \n\
+────────────────
+  aa   bb   cc  \n\
+────────────────
+""".strip())  # I have to put '\n\' because my trailing spaces are deleted
+        # by my editor otherwise, and the test would fail.
+
+    def testUnicodeStyleVruleFrame(self):
+        self.x.set_style(UNICODE)
+        self.x.vrules = FRAME
+        print()
+        print(self.x)
+        self.assertEqual(self.x.get_string().strip(), u"""
+┌──────────────┐
+│ A    B    C  │
+├──────────────┤
+│ a    b    c  │
+├──────────────┤
+│ aa   bb   cc │
+└──────────────┘
+""".strip())
+
+    def testUnicodeStyleWithoutHeader(self):
+        self.x.set_style(UNICODE)
+        self.x.header = False
+        print()
+        print(self.x)
+        self.assertEqual(self.x.get_string().strip(), u"""
+┌────┬────┬────┐
+│ a  │ b  │ c  │
+├────┼────┼────┤
+│ aa │ bb │ cc │
+└────┴────┴────┘
 """.strip())
 
 

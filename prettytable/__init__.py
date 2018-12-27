@@ -30,8 +30,9 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-__version__ = "0.9.2"
+__version__ = "0.9.3"
 
 from .prettytable import PrettyTable
 from .prettytable import ALL, HEADER, MSWORD_FRIENDLY, NONE, PLAIN_COLUMNS
+from .prettytable import FRAME, UNICODE
 from .factory import from_csv, from_db_cursor, from_html, from_html_one
