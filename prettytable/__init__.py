@@ -4,7 +4,7 @@
 # * Chris Clark
 #  * Klein Stephane
 #  * John Filleau
-# PTable is forked from original Google Code page in April, 2015, and now
+# ptable is forked from original Google Code page in April, 2015, and now
 # maintained by Kane Blueriver <kxxoling@gmail.com>.
 #
 # Redistribution and use in source and binary forms, with or without
