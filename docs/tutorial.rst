@@ -91,12 +91,12 @@ using a cursor object, like this:
 ::
 
     import sqlite3
-    from prettytable import from_cursor
+    from prettytable import from_db_cursor
 
     connection = sqlite3.connect("mydb.db")
     cursor = connection.cursor()
     cursor.execute("SELECT field1, field2, field3 FROM my_table")
-    mytable = from_cursor(cursor)
+    mytable = from_db_cursor(cursor)
 
 Getting data out
 ----------------
@@ -389,7 +389,7 @@ in-built styles you can use for your tables:
 
 -  ``DEFAULT`` - The default look, used to undo any style changes you
    may have made
--  ``PLAIN_COLUMN`` - A borderless style that works well with command
+-  ``PLAIN_COLUMNS`` - A borderless style that works well with command
    line programs for columnar data
 
 Other styles are likely to appear in future releases.

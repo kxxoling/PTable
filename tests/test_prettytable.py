@@ -491,20 +491,71 @@ class BreakLineTests(unittest.TestCase):
         result = t.get_html_string(hrules=ALL)
         assert result.strip() == """
 <table>
-    <tr>
-        <th>Field 1</th>
-        <th>Field 2</th>
-    </tr>
-    <tr>
-        <td>value 1</td>
-        <td>value2<br>second line</td>
-    </tr>
-    <tr>
-        <td>value 3</td>
-        <td>value4</td>
-    </tr>
+    <thead>
+        <tr>
+            <th>Field 1</th>
+            <th>Field 2</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>value 1</td>
+            <td>value2<br>second line</td>
+        </tr>
+        <tr>
+            <td>value 3</td>
+            <td>value4</td>
+        </tr>
+    </tbody>
 </table>
 """.strip()
+
+
+class MaxMaxWidthsTests(unittest.TestCase):
+    def testMaxTableWidthIsTheLaw(self):
+        max_width = 127
+        t = PrettyTable(max_table_width=max_width)
+        t.field_names = ['tag', 'versions']
+
+        versions = [
+            'python/django-appconf:1.0.1',
+            'python/django-braces:1.8.1',
+            'python/django-compressor:2.0',
+            'python/django-debug-toolbar:1.4',
+            'python/django-extensions:1.6.1',
+        ]
+        t.add_row(['allmychanges.com', ', '.join(versions)])
+        result = t.get_string(hrules=ALL)
+        lines = result.strip().split('\n')
+
+        for line in lines:
+            line_length = len(line)
+            self.assertEqual(line_length, max_width)
+
+
+    def testMaxTableWidthIsTheLawWhenMinColumnWidthSetForSomeColumns(self):
+        max_width = 40
+        t = PrettyTable(max_table_width=max_width)
+        t.field_names = ['tag', 'versions']
+        versions = [
+            'python/django-appconf:1.0.1',
+            'python/django-braces:1.8.1',
+            'python/django-compressor:2.0',
+            'python/django-debug-toolbar:1.4',
+            'python/django-extensions:1.6.1',
+        ]
+        t.add_row(['allmychanges.com', ', '.join(versions)])
+
+        # Now, we'll set min width for first column
+        # to not wrap it's content
+        t._min_width['tag'] = len('allmychanges.com')
+
+        result = t.get_string(hrules=ALL)
+        lines = result.strip().split('\n')
+
+        for line in lines:
+            line_length = len(line)
+            self.assertEqual(line_length, max_width)
 
 
 class HtmlOutputTests(unittest.TestCase):
@@ -516,26 +567,30 @@ class HtmlOutputTests(unittest.TestCase):
         result = t.get_html_string()
         assert result.strip() == """
 <table>
-    <tr>
-        <th>Field 1</th>
-        <th>Field 2</th>
-        <th>Field 3</th>
-    </tr>
-    <tr>
-        <td>value 1</td>
-        <td>value2</td>
-        <td>value3</td>
-    </tr>
-    <tr>
-        <td>value 4</td>
-        <td>value5</td>
-        <td>value6</td>
-    </tr>
-    <tr>
-        <td>value 7</td>
-        <td>value8</td>
-        <td>value9</td>
-    </tr>
+    <thead>
+        <tr>
+            <th>Field 1</th>
+            <th>Field 2</th>
+            <th>Field 3</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>value 1</td>
+            <td>value2</td>
+            <td>value3</td>
+        </tr>
+        <tr>
+            <td>value 4</td>
+            <td>value5</td>
+            <td>value6</td>
+        </tr>
+        <tr>
+            <td>value 7</td>
+            <td>value8</td>
+            <td>value9</td>
+        </tr>
+    </tbody>
 </table>
 """.strip()
 
@@ -547,26 +602,30 @@ class HtmlOutputTests(unittest.TestCase):
         result = t.get_html_string(format=True)
         assert result.strip() == """
 <table frame="box" rules="cols">
-    <tr>
-        <th style="padding-left: 1em; padding-right: 1em; text-align: center">Field 1</th>
-        <th style="padding-left: 1em; padding-right: 1em; text-align: center">Field 2</th>
-        <th style="padding-left: 1em; padding-right: 1em; text-align: center">Field 3</th>
-    </tr>
-    <tr>
-        <td style="padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top">value 1</td>
-        <td style="padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top">value2</td>
-        <td style="padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top">value3</td>
-    </tr>
-    <tr>
-        <td style="padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top">value 4</td>
-        <td style="padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top">value5</td>
-        <td style="padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top">value6</td>
-    </tr>
-    <tr>
-        <td style="padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top">value 7</td>
-        <td style="padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top">value8</td>
-        <td style="padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top">value9</td>
-    </tr>
+    <thead>
+        <tr>
+            <th style="padding-left: 1em; padding-right: 1em; text-align: center">Field 1</th>
+            <th style="padding-left: 1em; padding-right: 1em; text-align: center">Field 2</th>
+            <th style="padding-left: 1em; padding-right: 1em; text-align: center">Field 3</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td style="padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top">value 1</td>
+            <td style="padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top">value2</td>
+            <td style="padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top">value3</td>
+        </tr>
+        <tr>
+            <td style="padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top">value 4</td>
+            <td style="padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top">value5</td>
+            <td style="padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top">value6</td>
+        </tr>
+        <tr>
+            <td style="padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top">value 7</td>
+            <td style="padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top">value8</td>
+            <td style="padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top">value9</td>
+        </tr>
+    </tbody>
 </table>
 """.strip()
 
@@ -687,6 +746,66 @@ class PrintJapaneseTest(unittest.TestCase):
     def testPrint(self):
         print()
         print(self.x)
+
+
+class UnpaddedTableTest(unittest.TestCase):
+    def setUp(self):
+        self.x = PrettyTable(header=False, padding_width=0)
+        self.x.add_row("abc")
+        self.x.add_row("def")
+        self.x.add_row("g..")
+
+    def testUnbordered(self):
+        self.x.border = False
+        result = self.x.get_string()
+        self.assertEqual(result.strip(), """
+abc
+def
+g..
+""".strip())
+
+    def testBordered(self):
+        self.x.border = True
+        result = self.x.get_string()
+        self.assertEqual(result.strip(), """
++-+-+-+
+|a|b|c|
+|d|e|f|
+|g|.|.|
++-+-+-+
+""".strip())
+
+
+class PrintMarkdownAndRstTest(unittest.TestCase):
+    def setUp(self):
+        self.x = PrettyTable(["A", "B", "C"])
+        self.x.add_row(["a", "b", "c"])
+        self.x.add_row(["aa", "bb", "cc"])
+
+    def testMarkdownOutput(self):
+        result = self.x.get_md_string()
+        print()
+        print(result)
+        self.assertEqual(result.strip(), """
+| A  | B  | C  |
+|----|----|----|
+| a  | b  | c  |
+| aa | bb | cc |
+""".strip())
+
+    def testRstOutput(self):
+        result = self.x.get_rst_string()
+        print()
+        print(result)
+        self.assertEqual(result.strip(), """
++----+----+----+
+| A  | B  | C  |
++====+====+====+
+| a  | b  | c  |
++----+----+----+
+| aa | bb | cc |
++----+----+----+
+""".strip())
 
 
 if __name__ == "__main__":

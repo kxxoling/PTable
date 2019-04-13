@@ -4,7 +4,7 @@ About PTable
 
 PTable is a simple Python library designed to make it quick and easy to
 represent tabular data in visually appealing ASCII tables, originally
-forked from `PrettyTable <https://code.google.com/p/prettytable/>`_ .
+forked from `PrettyTable <https://code.google.com/p/prettytable/>`_.
 
 .. image:: https://travis-ci.org/kxxoling/PTable.svg
     :target: https://travis-ci.org/kxxoling/PTable
@@ -14,21 +14,21 @@ forked from `PrettyTable <https://code.google.com/p/prettytable/>`_ .
     :target: https://landscape.io/github/kxxoling/PTable/master
     :alt: Code Health
 
-.. image:: https://pypip.in/download/PTable/badge.svg?period=week
-    :target: https://pypi.python.org/pypi/PTable/
-    :alt: Downloads
+.. image:: https://coveralls.io/repos/github/kxxoling/PTable/badge.svg?branch=master
+    :target: https://coveralls.io/github/kxxoling/PTable?branch=master
+    :alt: Coverage
 
 
 Installation
 ============
 
-As PTable is a fork of PrettyTable, and compatible to all its APIs,
+As PTable is a fork of PrettyTable, and compatible with all its APIs,
 so PTable is usage is the same as PrettyTable, and the installation
 would cover on the original PrettyTable.
 
 As always, you can install PTable in 3 ways.
 
-Via pip(recommend)::
+Via pip (recommend)::
 
     pip install PTable
 
@@ -58,7 +58,7 @@ PTable library API is almost as PrettyTable, you can import the same API from
     from prettytable import PrettyTable
     x = PrettyTable()
 
-A better hosted document is hosted on `ReadTheDocument <http://ptable.readthedocs.org/>`_ .
+A better hosted document is hosted on `ReadTheDocument <http://ptable.readthedocs.org/>`_.
 
 
 As command-line tool
@@ -70,7 +70,7 @@ This is an original function of PTable, can be used as ``ptable`` command:
 
     ptable --csv somefile.csv
 
-or a unix style pipe:
+or a Unix style pipe:
 
 .. code-block:: shell
 

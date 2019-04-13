@@ -133,7 +133,10 @@ class PrettyTable(object):
 
         self._min_table_width = kwargs["min_table_width"] or None
         self._max_table_width = kwargs["max_table_width"] or None
-        self._padding_width = kwargs["padding_width"] or 1
+        if kwargs["padding_width"] is None:
+            self._padding_width = 1
+        else:
+            self._padding_width = kwargs["padding_width"]
         self._left_padding_width = kwargs["left_padding_width"] or None
         self._right_padding_width = kwargs["right_padding_width"] or None
 
@@ -305,7 +308,7 @@ class PrettyTable(object):
         try:
             assert int(val) >= 0
         except AssertionError:
-            raise Exception("Invalid value for %s: %s!" % (name, self._unicode(val)))
+            raise Exception("Invalid value for {}: {}!".format(name, self._unicode(val)))
 
     def _validate_true_or_false(self, name, val):
         try:
@@ -479,7 +482,20 @@ class PrettyTable(object):
         Arguments:
 
         min_width - minimum width integer"""
-        return self._min_width
+        if self.header:
+            fields = self._field_names
+        else:
+            fields = self._rows[0] if self._rows else []
+        result = {
+            # minimum column width can't be lesser
+            # than header's length
+            name: max(
+                _str_block_width(unicode_(name)),
+                self._min_width.get(name, 0)
+            )
+            for name in fields
+        }
+        return result
 
     @min_width.setter
     def min_width(self, val):
@@ -1056,9 +1072,37 @@ class PrettyTable(object):
         if self._max_table_width:
             table_width = self._compute_table_width(options)
             if table_width > self._max_table_width:
+                # get dict with minimum widths for fields
+                min_width = self.min_width
+
+                # first calculate width for paddings and vrules this
+                # space we can't shrink.
+
+                # Space for vrules
+                nonshrinkable = 2 if options["vrules"] in (FRAME, ALL) else 0
+                # Space for vrules between columns
+                nonshrinkable += len(self._field_names) - 1
+                # Space for padding in each column
+                per_col_padding = sum(self._get_padding_widths(options))
+                nonshrinkable += len(widths) * per_col_padding
+                # Min space for each column
+                nonshrinkable += sum(min_width.values())
+
                 # Shrink widths in proportion
-                scale = 1.0 * self._max_table_width / table_width
-                widths = [int(math.floor(w * scale)) for w in widths]
+                scale = float(self._max_table_width - nonshrinkable) / (table_width - nonshrinkable)
+
+                def calculate_new_width(field_name, old_width):
+                    width = min_width[field_name]
+                    # scale according to recalculated table width
+                    scaled_part = int(math.floor((old_width - width) * scale))
+                    # enforce minimum column width as 1 symbol
+                    return max(1, width + scaled_part)
+
+                widths = list(map(
+                    calculate_new_width,
+                    self._field_names,
+                    widths
+                ))
                 self._widths = widths
 
         # Are we under min_table_width or title width?
@@ -1128,6 +1172,51 @@ class PrettyTable(object):
     # PLAIN TEXT STRING METHODS  #
     ##############################
 
+    def _prepare_lines(self, **kwargs):
+
+        """Return a list of lines, for building the return-string of `get_string`.
+        Arguments: see method `get_string`.
+        """
+
+        options = self._get_options(kwargs)
+
+        lines = []
+
+        # Don't think too hard about an empty table
+        # Is this the desired behaviour?  Maybe we should still print the header?
+        if self.rowcount == 0 and (not options["print_empty"] or not options["border"]):
+            return []
+
+        # Get the rows we need to print, taking into account slicing, sorting, etc.
+        rows = self._get_rows(options)
+
+        # Turn all data in all rows into Unicode, formatted as desired
+        formatted_rows = self._format_rows(rows, options)
+
+        # Compute column widths
+        self._compute_widths(formatted_rows, options)
+        self._hrule = self._stringify_hrule(options)
+
+        # Add title
+        title = options["title"] or self._title
+        if title:
+            lines.append(self._stringify_title(title, options))
+
+        # Add header or top of border
+        if options["header"]:
+            lines.extend(self._stringify_header(options).split('\n'))
+        elif options["border"] and options["hrules"] in (ALL, FRAME):
+            lines.append(self._hrule)
+
+        # Add rows
+        for row in formatted_rows:
+            lines.append(self._stringify_row(row, options))
+
+        # Add bottom of border
+        if options["border"] and options["hrules"] == FRAME:
+            lines.append(self._hrule)
+        return lines
+
     def get_string(self, **kwargs):
 
         """Return string representation of table in current state.
@@ -1154,45 +1243,7 @@ class PrettyTable(object):
         sort_key - sorting key function, applied to data points before sorting
         reversesort - True or False to sort in descending or ascending order
         print empty - if True, stringify just the header for an empty table, if False return an empty string """
-
-        options = self._get_options(kwargs)
-
-        lines = []
-
-        # Don't think too hard about an empty table
-        # Is this the desired behaviour?  Maybe we should still print the header?
-        if self.rowcount == 0 and (not options["print_empty"] or not options["border"]):
-            return ""
-
-        # Get the rows we need to print, taking into account slicing, sorting, etc.
-        rows = self._get_rows(options)
-
-        # Turn all data in all rows into Unicode, formatted as desired
-        formatted_rows = self._format_rows(rows, options)
-
-        # Compute column widths
-        self._compute_widths(formatted_rows, options)
-        self._hrule = self._stringify_hrule(options)
-
-        # Add title
-        title = options["title"] or self._title
-        if title:
-            lines.append(self._stringify_title(title, options))
-
-        # Add header or top of border
-        if options["header"]:
-            lines.append(self._stringify_header(options))
-        elif options["border"] and options["hrules"] in (ALL, FRAME):
-            lines.append(self._hrule)
-
-        # Add rows
-        for row in formatted_rows:
-            lines.append(self._stringify_row(row, options))
-
-        # Add bottom of border
-        if options["border"] and options["hrules"] == FRAME:
-            lines.append(self._hrule)
-
+        lines = self._prepare_lines(**kwargs)
         return self._unicode("\n").join(lines)
 
     def _stringify_hrule(self, options):
@@ -1377,6 +1428,60 @@ class PrettyTable(object):
             kwargs["start"] += page_length
         return "\f".join(pages)
 
+    ################################
+    # MARKDOWN TEXT STRING METHODS #
+    ################################
+
+    def get_md_string(self, **kwargs):
+
+        """Return string representation of table in markdown.
+
+        Arguments:
+
+        start - index of first data row to include in output
+        end - index of last data row to include in output PLUS ONE (list slice style)
+        fields - names of fields (columns) to include
+        int_format - controls formatting of integer data
+        float_format - controls formatting of floating point data
+        sortby - name of field to sort rows by
+        sort_key - sorting key function, applied to data points before sorting
+        reversesort - True or False to sort in descending or ascending order
+        print empty - if True, stringify just the header for an empty table, if False return an empty string """
+
+        kwargs['title'] = None
+        kwargs['header'] = True
+        kwargs['border'] = True
+        kwargs['junction_char'] = '|'
+        kwargs['hrules'] = HEADER
+        lines = self._prepare_lines(**kwargs)
+        return self._unicode("\n").join(lines)
+
+    def get_rst_string(self, **kwargs):
+
+        """Return string representation of table in reStructuredText.
+
+        Arguments:
+
+        start - index of first data row to include in output
+        end - index of last data row to include in output PLUS ONE (list slice style)
+        fields - names of fields (columns) to include
+        int_format - controls formatting of integer data
+        float_format - controls formatting of floating point data
+        sortby - name of field to sort rows by
+        sort_key - sorting key function, applied to data points before sorting
+        reversesort - True or False to sort in descending or ascending order
+        print empty - if True, stringify just the header for an empty table, if False return an empty string """
+
+        kwargs['title'] = None
+        kwargs['header'] = True
+        kwargs['border'] = True
+        kwargs['hrules'] = ALL
+        lines = self._prepare_lines(**kwargs)
+        # line-0 is _hrule, line-1 is header, line-2 is _hrule
+        if len(lines) >= 3:
+            lines[2] = lines[2].replace('-', '=')
+        return self._unicode("\n").join(lines)
+
     ##############################
     # HTML STRING METHODS        #
     ##############################
@@ -1426,7 +1531,7 @@ class PrettyTable(object):
         open_tag.append("<table")
         if options["attributes"]:
             for attr_name in options["attributes"]:
-                open_tag.append(" %s=\"%s\"" % (attr_name, options["attributes"][attr_name]))
+                open_tag.append(" {}=\"{}\"".format(attr_name, options["attributes"][attr_name]))
         open_tag.append(">")
         lines.append("".join(open_tag))
 
@@ -1440,24 +1545,27 @@ class PrettyTable(object):
 
         # Headers
         if options["header"]:
-            lines.append("    <tr>")
+            lines.append("    <thead>")
+            lines.append("        <tr>")
             for field in self._field_names:
                 if options["fields"] and field not in options["fields"]:
                     continue
-                lines.append("        <th>%s</th>" % escape(field).replace("\n", linebreak))
-            lines.append("    </tr>")
+                lines.append("            <th>%s</th>" % escape(field).replace("\n", linebreak))
+            lines.append("        </tr>")
+            lines.append("    </thead>")
 
         # Data
+        lines.append("    <tbody>")
         rows = self._get_rows(options)
         formatted_rows = self._format_rows(rows, options)
         for row in formatted_rows:
-            lines.append("    <tr>")
+            lines.append("        <tr>")
             for field, datum in zip(self._field_names, row):
                 if options["fields"] and field not in options["fields"]:
                     continue
-                lines.append("        <td>%s</td>" % escape(datum).replace("\n", linebreak))
-            lines.append("    </tr>")
-
+                lines.append("            <td>%s</td>" % escape(datum).replace("\n", linebreak))
+            lines.append("        </tr>")
+        lines.append("    </tbody>")
         lines.append("</table>")
 
         return self._unicode("\n").join(lines)
@@ -1490,7 +1598,7 @@ class PrettyTable(object):
                 open_tag.append(" frame=\"vsides\" rules=\"cols\"")
         if options["attributes"]:
             for attr_name in options["attributes"]:
-                open_tag.append(" %s=\"%s\"" % (attr_name, options["attributes"][attr_name]))
+                open_tag.append(" {}=\"{}\"".format(attr_name, options["attributes"][attr_name]))
         open_tag.append(">")
         lines.append("".join(open_tag))
 
@@ -1499,21 +1607,24 @@ class PrettyTable(object):
         if title:
             cols = len(options["fields"]) if options["fields"] else len(self.field_names)
             lines.append("    <tr>")
-            lines.append("        <td colspan=%d>%s</td>" % (cols, title))
+            lines.append("            <td colspan=%d>%s</td>" % (cols, title))
             lines.append("    </tr>")
 
         # Headers
         if options["header"]:
-            lines.append("    <tr>")
+            lines.append("    <thead>")
+            lines.append("        <tr>")
             for field in self._field_names:
                 if options["fields"] and field not in options["fields"]:
                     continue
                 lines.append(
-                    "        <th style=\"padding-left: %dem; padding-right: %dem; text-align: center\">%s</th>" % (
+                    "            <th style=\"padding-left: %dem; padding-right: %dem; text-align: center\">%s</th>" % (
                     lpad, rpad, escape(field).replace("\n", linebreak)))
-            lines.append("    </tr>")
+            lines.append("        </tr>")
+            lines.append("    </thead>")
 
         # Data
+        lines.append("    <tbody>")
         rows = self._get_rows(options)
         formatted_rows = self._format_rows(rows, options)
         aligns = []
@@ -1522,14 +1633,15 @@ class PrettyTable(object):
             aligns.append({"l": "left", "r": "right", "c": "center"}[self._align[field]])
             valigns.append({"t": "top", "m": "middle", "b": "bottom"}[self._valign[field]])
         for row in formatted_rows:
-            lines.append("    <tr>")
+            lines.append("        <tr>")
             for field, datum, align, valign in zip(self._field_names, row, aligns, valigns):
                 if options["fields"] and field not in options["fields"]:
                     continue
                 lines.append(
-                    "        <td style=\"padding-left: %dem; padding-right: %dem; text-align: %s; vertical-align: %s\">%s</td>" % (
+                    "            <td style=\"padding-left: %dem; padding-right: %dem; text-align: %s; vertical-align: %s\">%s</td>" % (
                     lpad, rpad, align, valign, escape(datum).replace("\n", linebreak)))
-            lines.append("    </tr>")
+            lines.append("        </tr>")
+        lines.append("    </tbody>")
         lines.append("</table>")
 
         return self._unicode("\n").join(lines)
