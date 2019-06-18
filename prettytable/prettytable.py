@@ -1018,6 +1018,8 @@ class PrettyTable(object):
         data = [tuple(filter(None, map(str.strip, splitline)))
                 for line in raw.splitlines()
                 for splitline in [line.split('|')] if len(splitline) > 1]
+        if self.title is not None:
+            data = data[1:]
         if not headers:
             data = data[1:]
         with open(filename, 'w') as f:
