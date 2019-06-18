@@ -1004,6 +1004,26 @@ class PrettyTable(object):
     def copy(self):
         return copy.deepcopy(self)
 
+    def to_csv(self, filename, headers=True):
+        """Save PrettyTable results to a CSV file.
+
+        Adapted from @AdamSmith https://stackoverflow.com/questions/32128226
+
+        Arguments:
+
+        filename - filepath for the output CSV
+        headers - whether to include the header row in the CSV
+        """
+        raw = self.get_string()
+        data = [tuple(filter(None, map(str.strip, splitline)))
+                for line in raw.splitlines()
+                for splitline in [line.split('|')] if len(splitline) > 1]
+        if not headers:
+            data = data[1:]
+        with open(filename, 'w') as f:
+            for d in data:
+                f.write('{}\n'.format(','.join(d)))
+
     ##############################
     # MISC PRIVATE METHODS       #
     ##############################
