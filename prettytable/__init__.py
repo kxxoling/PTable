@@ -4,6 +4,8 @@
 # * Chris Clark
 #  * Klein Stephane
 #  * John Filleau
+# ptable2 is forked from Github Code in July, 2020, and not maintained by
+# Maarten <anonymous.maarten@gmail.com>
 # PTable is forked from original Google Code page in April, 2015, and now
 # maintained by Kane Blueriver <kxxoling@gmail.com>.
 #

@@ -9,7 +9,7 @@ def fread(filepath):
 
 
 setup(
-    name='PTable',
+    name='ptable2',
     version=version,
     include_package_data=True,
     zip_safe=False,
@@ -20,13 +20,11 @@ setup(
     },
     classifiers=[
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: Implementation :: CPython',
         'License :: OSI Approved :: BSD License',
         'Topic :: Text Processing'
@@ -36,9 +34,9 @@ setup(
     long_description=fread('README.rst'),
     author='Luke Maurits',
     author_email='luke@maurits.id.au',
-    maintainer='Kane Blueriver',
-    maintainer_email='kxxoling@gmail.com',
-    url='https://github.com/kxxoling/PTable',
+    maintainer='Maarten',
+    maintainer_email='anonymous.maarten@gmail.com',
+    url='https://github.com/madebr/ptable2',
     py_modules=['prettytable', 'prettytable.cli', 'prettytable.prettytable',
                 'prettytable.factory', 'prettytable._compact'],
     test_suite="test_prettytable",
