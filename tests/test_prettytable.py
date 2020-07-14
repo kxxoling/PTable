@@ -2,16 +2,16 @@
 # coding=UTF-8
 
 from prettytable import PrettyTable
-from prettytable import ALL, HEADER, MSWORD_FRIENDLY, NONE
+from prettytable import ALL, MSWORD_FRIENDLY, NONE
 from prettytable import from_csv, from_db_cursor, from_html, from_html_one
 
-from prettytable._compact import StringIO
 try:
     import sqlite3
     _have_sqlite = True
 except ImportError:
     _have_sqlite = False
 
+from io import StringIO
 from math import pi, e, sqrt
 import unittest
 
@@ -591,7 +591,7 @@ class CsvConstructorTest(BasicTests):
         Adelaide, 1295 ,  1158259   ,       600.5
         Hobart, 1357 ,   205556   ,       619.5
         Darwin, 0112 ,   120900   ,      1714.7"""
-        csv_fp = StringIO.StringIO(csv_string)
+        csv_fp = StringIO(csv_string)
         self.x = from_csv(csv_fp)
 
 

@@ -1,9 +1,9 @@
 from __future__ import print_function
 import argparse
+import io
 import sys
 
 from .factory import from_csv, from_md
-from ._compact import StringIO
 
 
 def main():
@@ -22,7 +22,7 @@ def main():
             print(from_md(md.read()))
     else:
         text_in = sys.stdin.read()
-        print(from_csv(StringIO.StringIO(text_in)))
+        print(from_csv(io.StringIO.StringIO(text_in)))
 
 
 if __name__ == '__main__':

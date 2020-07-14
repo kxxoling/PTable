@@ -2,8 +2,8 @@
 Table factories
 """
 import csv
+import html.parser
 from .prettytable import PrettyTable
-from ._compact import py3k, HTMLParser
 
 
 def from_csv(fp, field_names=None, **kwargs):
@@ -23,10 +23,7 @@ def from_csv(fp, field_names=None, **kwargs):
     if field_names:
         table.field_names = field_names
     else:
-        if py3k:
-            table.field_names = [x.strip() for x in next(reader)]
-        else:
-            table.field_names = [x.strip() for x in reader.next()]
+        table.field_names = [x.strip() for x in next(reader)]
 
     for row in reader:
         table.add_row([x.strip() for x in row])
@@ -43,9 +40,9 @@ def from_db_cursor(cursor, **kwargs):
         return table
 
 
-class TableHandler(HTMLParser):
+class TableHandler(html.parser.HTMLParser):
     def __init__(self, **kwargs):
-        HTMLParser.__init__(self)
+        html.parser.HTMLParser.__init__(self)
         self.kwargs = kwargs
         self.tables = []
         self.last_row = []

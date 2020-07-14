@@ -1,9 +1,7 @@
 # -*- coding:utf-8 -*-
-from __future__ import unicode_literals
 import unittest
 
 from prettytable.prettytable import _char_block_width
-
 
 
 def _width_test_factory(width, words):

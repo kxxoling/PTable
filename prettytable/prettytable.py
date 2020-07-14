@@ -1,13 +1,11 @@
 #!/usr/bin/env python
 import copy
+import html
 import math
 import random
 import re
 import textwrap
 import unicodedata
-from ._compact import py3k, itermap, uni_chr, escape
-from ._compact import str_types
-from ._compact import unicode_, basestring_
 
 
 # hrule styles
@@ -153,10 +151,8 @@ class PrettyTable(object):
         self._attributes = kwargs["attributes"] or {}
 
     def _unicode(self, value):
-        if not isinstance(value, basestring_):
+        if not isinstance(value, str):
             value = str(value)
-        if not isinstance(value, unicode_):
-            value = unicode_(value, self.encoding, "strict")
         return value
 
     def _justify(self, text, width, align):
@@ -210,14 +206,7 @@ class PrettyTable(object):
             raise Exception("Index %s is invalid, must be an integer or slice" % str(index))
         return new
 
-    if py3k:
-        def __str__(self):
-            return self.__unicode__()
-    else:
-        def __str__(self):
-            return self.__unicode__().encode(self.encoding)
-
-    def __unicode__(self):
+    def __str__(self):
         return self.get_string()
 
     ##############################
@@ -314,7 +303,7 @@ class PrettyTable(object):
         if val == "":
             return
         try:
-            assert type(val) in str_types
+            assert type(val) is str
             assert val.isdigit()
         except AssertionError:
             raise Exception("Invalid value for %s!  Must be an integer format string." % name)
@@ -324,7 +313,7 @@ class PrettyTable(object):
             return
         try:
             val = val.rsplit('f')[0]
-            assert type(val) in str_types
+            assert type(val) is str
             assert "." in val
             bits = val.split(".")
             assert len(bits) <= 2
@@ -480,7 +469,7 @@ class PrettyTable(object):
             # minimum column width can't be lesser
             # than header's length
             name: max(
-                _str_block_width(unicode_(name)),
+                _str_block_width(str(name)),
                 self._min_width.get(name, 0)
             )
             for name in fields
@@ -1518,7 +1507,7 @@ class PrettyTable(object):
             for field in self._field_names:
                 if options["fields"] and field not in options["fields"]:
                     continue
-                lines.append("            <th>%s</th>" % escape(field).replace("\n", linebreak))
+                lines.append("            <th>%s</th>" % html.escape(field).replace("\n", linebreak))
             lines.append("        </tr>")
             lines.append("    </thead>")
 
@@ -1531,7 +1520,7 @@ class PrettyTable(object):
             for field, datum in zip(self._field_names, row):
                 if options["fields"] and field not in options["fields"]:
                     continue
-                lines.append("            <td>%s</td>" % escape(datum).replace("\n", linebreak))
+                lines.append("            <td>%s</td>" % html.escape(datum).replace("\n", linebreak))
             lines.append("        </tr>")
         lines.append("    </tbody>")
         lines.append("</table>")
@@ -1587,7 +1576,7 @@ class PrettyTable(object):
                     continue
                 lines.append(
                     "            <th style=\"padding-left: %dem; padding-right: %dem; text-align: center\">%s</th>" % (
-                    lpad, rpad, escape(field).replace("\n", linebreak)))
+                    lpad, rpad, html.escape(field).replace("\n", linebreak)))
             lines.append("        </tr>")
             lines.append("    </thead>")
 
@@ -1607,7 +1596,7 @@ class PrettyTable(object):
                     continue
                 lines.append(
                     "            <td style=\"padding-left: %dem; padding-right: %dem; text-align: %s; vertical-align: %s\">%s</td>" % (
-                    lpad, rpad, align, valign, escape(datum).replace("\n", linebreak)))
+                    lpad, rpad, align, valign, html.escape(datum).replace("\n", linebreak)))
             lines.append("        </tr>")
         lines.append("    </tbody>")
         lines.append("</table>")
@@ -1632,7 +1621,7 @@ def _char_block_width(char):
     if 0xac00 <= char <= 0xd7af:
         return 2
     # Combining?
-    if unicodedata.combining(uni_chr(char)):
+    if unicodedata.combining(chr(char)):
         return 0
     # Hiragana and Katakana
     if 0x3040 <= char <= 0x309f or 0x30a0 <= char <= 0x30ff:
@@ -1654,4 +1643,4 @@ def _char_block_width(char):
 
 
 def _str_block_width(val):
-    return sum(itermap(_char_block_width, itermap(ord, _re.sub("", val))))
+    return sum(map(_char_block_width, map(ord, _re.sub("", val))))
