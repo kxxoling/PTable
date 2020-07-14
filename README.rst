@@ -54,7 +54,7 @@ ptable2 library API is almost as PrettyTable, you can import the same API from
     from prettytable import PrettyTable
     x = PrettyTable()
 
-A better hosted document is hosted on `ReadTheDocument <http://ptable.readthedocs.org/>`_.
+A better hosted document is hosted on `readthedocs <https://ptable2.readthedocs.io/en/latest//>`_.
 
 
 As command-line tool
@@ -80,7 +80,7 @@ Relative links
 ==============
 
 * `Source Code (GitHub) <https://github.com/madebr/ptable2>`__
-* `RTFD <https://ptable.readthedocs.org>`__
+* `RTFD <https://ptable2.readthedocs.io/en/latest/https://ptable.readthedocs.org>`__
 * `PyPI <https://pypi.python.org/pypi/ptabl://pypi.python.org/pypi/ptable>`__
 * `PrettyTable <https://code.google.com/p/prettytable/>`_
 

@@ -21,5 +21,5 @@ Links
 
 * `Source Code (GitHub) <https://github.com/madebr/ptable2>`_
 * `PyPI <https://pypi.python.org/pypi/ptabl://pypi.python.org/pypi/ptable>`_
-* `RTFD <https://ptable.readthedocs.org>`_
+* `RTFD <https://ptable2.readthedocs.io/en/latest/>`_
 
