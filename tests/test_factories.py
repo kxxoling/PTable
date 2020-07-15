@@ -1,8 +1,11 @@
 # !/usr/bin/python
 # This Python file uses the following encoding: utf-8
-from __future__ import print_function
+from io import StringIO
 import unittest
-from prettytable.factory import from_md, split_md_row, strip_md_content
+from prettytable.factory import from_csv, from_md, split_md_row, strip_md_content
+import textwrap
+
+from .test_prettytable import BasicTests
 
 
 md = \
@@ -48,6 +51,37 @@ class FromMdTest(unittest.TestCase):
                 self.assertNotEqual(':', stripped_s[0])
                 self.assertNotIn(':', stripped_s[0])
 
+
+class CsvConstructorTest(object):
+    def setUp(self):
+        self.fp = StringIO(textwrap.dedent("""\
+            City name, Area , Population , Annual Rainfall
+            Sydney, 2058 ,  4336374   ,      1214.8
+            Melbourne, 1566 ,  3806092   ,       646.9
+            Brisbane, 5905 ,  1857594   ,      1146.4
+            Perth, 5386 ,  1554769   ,       869.4
+            Adelaide, 1295 ,  1158259   ,       600.5
+            Hobart, 1357 ,   205556   ,       619.5
+            Darwin, 0112 ,   120900   ,      1714.7
+        """))
+
+
+class CsvConstructorTestEmpty(BasicTests, CsvConstructorTest):
+    def setUp(self):
+        CsvConstructorTest.setUp(self)
+        self.x = from_csv(self.fp)
+
+
+class CsvConstructorTest_fmtparams(BasicTests, CsvConstructorTest):
+    def setUp(self):
+        CsvConstructorTest.setUp(self)
+        self.x = from_csv(self.fp, lineterminator="\n")
+
+
+class CsvConstructorTest_Fieldnames(BasicTests, CsvConstructorTest):
+    def setUp(self):
+        CsvConstructorTest.setUp(self)
+        self.x = from_csv(self.fp, field_names=("City", "Area", "Population", "Annual Rainfall"))
 
 if __name__ == '__main__':
     unittest.main()

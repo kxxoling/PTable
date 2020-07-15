@@ -4,6 +4,7 @@
 from prettytable import PrettyTable
 from prettytable import ALL, MSWORD_FRIENDLY, NONE
 from prettytable import from_csv, from_db_cursor, from_html, from_html_one
+from prettytable.prettytable import DEFAULT, RANDOM
 
 try:
     import sqlite3
@@ -13,6 +14,7 @@ except ImportError:
 
 from io import StringIO
 from math import pi, e, sqrt
+import textwrap
 import unittest
 
 
@@ -171,7 +173,7 @@ class BasicTests(CityDataTest):
 
         string = self.x.get_string()
         lines = string.split("\n")
-        self.assertTrue("" not in lines)
+        self.assertTrue("\n" not in lines)
 
     def testAllLengthsEqual(self):
         """All lines in a table should be of the same length."""
@@ -223,7 +225,30 @@ class HrulesAllBasicTests(BasicTests):
         self.x.hrules = ALL
 
 
-class EmptyTableTests(CityDataTest):
+class EmptyTableTests(unittest.TestCase):
+    """Make sure the print_empty option works"""
+
+    def setUp(self):
+        CityDataTest.setUp(self)
+        self.y = PrettyTable()
+
+    def testAttributes(self):
+        assert self.y.rowcount == 0
+        assert self.y.colcount == 0
+
+    def testPrintEmptyTrue(self):
+        assert self.y.get_string(print_empty=True) != ""
+        assert self.x.get_string(print_empty=True) != self.y.get_string(print_empty=True)
+
+    def testPrintEmptyFalse(self):
+        assert self.y.get_string(print_empty=False) == ""
+        assert self.y.get_string(print_empty=False) != self.x.get_string(print_empty=False)
+
+    def testInteractionWithBorder(self):
+        assert self.y.get_string(border=False, print_empty=True) == ""
+
+
+class EmptyTableTestsFieldNames(unittest.TestCase):
     """Make sure the print_empty option works"""
 
     def setUp(self):
@@ -243,12 +268,43 @@ class EmptyTableTests(CityDataTest):
         assert self.y.get_string(border=False, print_empty=True) == ""
 
 
+class TableNoFieldnamesTests(unittest.TestCase):
+    """Make sure the print_empty option works"""
+
+    def setUp(self):
+        self.y = PrettyTable()
+        self.y.add_row([])
+
+    def testFieldNames(self):
+        assert len(self.y.field_names) == 0
+
+    def testAttributes(self):
+        assert self.y.rowcount == 1
+        assert self.y.colcount == 0
+
+
 class PresetBasicTests(BasicTests):
     """Run the basic tests after using set_style"""
 
     def setUp(self):
         BasicTests.setUp(self)
         self.x.set_style(MSWORD_FRIENDLY)
+
+
+class RandomStyleTests(BasicTests):
+    """Run the basic tests after using set_style"""
+
+    def setUp(self):
+        BasicTests.setUp(self)
+        self.x.set_style(RANDOM)
+
+
+class DefaultStyleTests(BasicTests):
+    """Run the basic tests after using set_style"""
+
+    def setUp(self):
+        BasicTests.setUp(self)
+        self.x.set_style(DEFAULT)
 
 
 class SlicingTests(CityDataTest):
@@ -579,20 +635,6 @@ class HtmlOutputTests(unittest.TestCase):
     </tbody>
 </table>
 """.strip()
-
-
-class CsvConstructorTest(BasicTests):
-    def setUp(self):
-        csv_string = """City name, Area , Population , Annual Rainfall
-        Sydney, 2058 ,  4336374   ,      1214.8
-        Melbourne, 1566 ,  3806092   ,       646.9
-        Brisbane, 5905 ,  1857594   ,      1146.4
-        Perth, 5386 ,  1554769   ,       869.4
-        Adelaide, 1295 ,  1158259   ,       600.5
-        Hobart, 1357 ,   205556   ,       619.5
-        Darwin, 0112 ,   120900   ,      1714.7"""
-        csv_fp = StringIO(csv_string)
-        self.x = from_csv(csv_fp)
 
 
 if _have_sqlite:
