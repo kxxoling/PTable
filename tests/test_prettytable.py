@@ -366,18 +366,19 @@ class SortingTests(CityDataTest):
 
         self.x.sortby = "City name"
         self.x.sort_key = key
-        assert self.x.get_string().strip() == """+-----------+------+------------+-----------------+
-| City name | Area | Population | Annual Rainfall |
-+-----------+------+------------+-----------------+
-|   Perth   | 5386 |  1554769   |      869.4      |
-|   Darwin  | 112  |   120900   |      1714.7     |
-|   Hobart  | 1357 |   205556   |      619.5      |
-|   Sydney  | 2058 |  4336374   |      1214.8     |
-|  Adelaide | 1295 |  1158259   |      600.5      |
-|  Brisbane | 5905 |  1857594   |      1146.4     |
-| Melbourne | 1566 |  3806092   |      646.9      |
-+-----------+------+------------+-----------------+
-""".strip()
+        assert self.x.get_string().strip() == textwrap.dedent("""\
+            +-----------+------+------------+-----------------+
+            | City name | Area | Population | Annual Rainfall |
+            +-----------+------+------------+-----------------+
+            |   Perth   | 5386 |  1554769   |      869.4      |
+            |   Darwin  | 112  |   120900   |      1714.7     |
+            |   Hobart  | 1357 |   205556   |      619.5      |
+            |   Sydney  | 2058 |  4336374   |      1214.8     |
+            |  Adelaide | 1295 |  1158259   |      600.5      |
+            |  Brisbane | 5905 |  1857594   |      1146.4     |
+            | Melbourne | 1566 |  3806092   |      646.9      |
+            +-----------+------+------------+-----------------+
+            """).strip()
 
     def testSortSlice(self):
         """Make sure sorting and slicing interact in the expected way"""
@@ -445,77 +446,77 @@ class BreakLineTests(unittest.TestCase):
         t.add_row(['value 1', 'value2\nsecond line'])
         t.add_row(['value 3', 'value4'])
         result = t.get_string(hrules=ALL)
-        assert result.strip() == """
-+---------+-------------+
-| Field 1 |   Field 2   |
-+---------+-------------+
-| value 1 |    value2   |
-|         | second line |
-+---------+-------------+
-| value 3 |    value4   |
-+---------+-------------+
-""".strip()
+        assert result.strip() == textwrap.dedent("""\
+            +---------+-------------+
+            | Field 1 |   Field 2   |
+            +---------+-------------+
+            | value 1 |    value2   |
+            |         | second line |
+            +---------+-------------+
+            | value 3 |    value4   |
+            +---------+-------------+
+            """).strip()
 
         t = PrettyTable(['Field 1', 'Field 2'])
         t.add_row(['value 1', 'value2\nsecond line'])
         t.add_row(['value 3\n\nother line', 'value4\n\n\nvalue5'])
         result = t.get_string(hrules=ALL)
-        assert result.strip() == """
-+------------+-------------+
-|  Field 1   |   Field 2   |
-+------------+-------------+
-|  value 1   |    value2   |
-|            | second line |
-+------------+-------------+
-|  value 3   |    value4   |
-|            |             |
-| other line |             |
-|            |    value5   |
-+------------+-------------+
-""".strip()
+        assert result.strip() == textwrap.dedent("""\
+            +------------+-------------+
+            |  Field 1   |   Field 2   |
+            +------------+-------------+
+            |  value 1   |    value2   |
+            |            | second line |
+            +------------+-------------+
+            |  value 3   |    value4   |
+            |            |             |
+            | other line |             |
+            |            |    value5   |
+            +------------+-------------+
+            """).strip()
 
         t = PrettyTable(['Field 1', 'Field 2'])
         t.add_row(['value 1', 'value2\nsecond line'])
         t.add_row(['value 3\n\nother line', 'value4\n\n\nvalue5'])
         result = t.get_string()
-        assert result.strip() == """
-+------------+-------------+
-|  Field 1   |   Field 2   |
-+------------+-------------+
-|  value 1   |    value2   |
-|            | second line |
-|  value 3   |    value4   |
-|            |             |
-| other line |             |
-|            |    value5   |
-+------------+-------------+
-""".strip()
+        assert result.strip() == textwrap.dedent("""\
+            +------------+-------------+
+            |  Field 1   |   Field 2   |
+            +------------+-------------+
+            |  value 1   |    value2   |
+            |            | second line |
+            |  value 3   |    value4   |
+            |            |             |
+            | other line |             |
+            |            |    value5   |
+            +------------+-------------+
+            """).strip()
 
     def testHtmlBreakLine(self):
         t = PrettyTable(['Field 1', 'Field 2'])
         t.add_row(['value 1', 'value2\nsecond line'])
         t.add_row(['value 3', 'value4'])
         result = t.get_html_string(hrules=ALL)
-        assert result.strip() == """
-<table>
-    <thead>
-        <tr>
-            <th>Field 1</th>
-            <th>Field 2</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>value 1</td>
-            <td>value2<br>second line</td>
-        </tr>
-        <tr>
-            <td>value 3</td>
-            <td>value4</td>
-        </tr>
-    </tbody>
-</table>
-""".strip()
+        assert result.strip() == textwrap.dedent("""\
+            <table>
+                <thead>
+                    <tr>
+                        <th>Field 1</th>
+                        <th>Field 2</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>value 1</td>
+                        <td>value2<br>second line</td>
+                    </tr>
+                    <tr>
+                        <td>value 3</td>
+                        <td>value4</td>
+                    </tr>
+                </tbody>
+            </table>
+            """).strip()
 
 
 class MaxMaxWidthsTests(unittest.TestCase):
@@ -572,34 +573,34 @@ class HtmlOutputTests(unittest.TestCase):
         t.add_row(['value 4', 'value5', 'value6'])
         t.add_row(['value 7', 'value8', 'value9'])
         result = t.get_html_string()
-        assert result.strip() == """
-<table>
-    <thead>
-        <tr>
-            <th>Field 1</th>
-            <th>Field 2</th>
-            <th>Field 3</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>value 1</td>
-            <td>value2</td>
-            <td>value3</td>
-        </tr>
-        <tr>
-            <td>value 4</td>
-            <td>value5</td>
-            <td>value6</td>
-        </tr>
-        <tr>
-            <td>value 7</td>
-            <td>value8</td>
-            <td>value9</td>
-        </tr>
-    </tbody>
-</table>
-""".strip()
+        assert result.strip() == textwrap.dedent("""\
+            <table>
+                <thead>
+                    <tr>
+                        <th>Field 1</th>
+                        <th>Field 2</th>
+                        <th>Field 3</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>value 1</td>
+                        <td>value2</td>
+                        <td>value3</td>
+                    </tr>
+                    <tr>
+                        <td>value 4</td>
+                        <td>value5</td>
+                        <td>value6</td>
+                    </tr>
+                    <tr>
+                        <td>value 7</td>
+                        <td>value8</td>
+                        <td>value9</td>
+                    </tr>
+                </tbody>
+            </table>
+            """).strip()
 
     def testHtmlOutputFormated(self):
         t = PrettyTable(['Field 1', 'Field 2', 'Field 3'])
@@ -607,34 +608,34 @@ class HtmlOutputTests(unittest.TestCase):
         t.add_row(['value 4', 'value5', 'value6'])
         t.add_row(['value 7', 'value8', 'value9'])
         result = t.get_html_string(format=True)
-        assert result.strip() == """
-<table frame="box" rules="cols">
-    <thead>
-        <tr>
-            <th style="padding-left: 1em; padding-right: 1em; text-align: center">Field 1</th>
-            <th style="padding-left: 1em; padding-right: 1em; text-align: center">Field 2</th>
-            <th style="padding-left: 1em; padding-right: 1em; text-align: center">Field 3</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td style="padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top">value 1</td>
-            <td style="padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top">value2</td>
-            <td style="padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top">value3</td>
-        </tr>
-        <tr>
-            <td style="padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top">value 4</td>
-            <td style="padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top">value5</td>
-            <td style="padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top">value6</td>
-        </tr>
-        <tr>
-            <td style="padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top">value 7</td>
-            <td style="padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top">value8</td>
-            <td style="padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top">value9</td>
-        </tr>
-    </tbody>
-</table>
-""".strip()
+        assert result.strip() == textwrap.dedent("""\
+            <table frame="box" rules="cols">
+                <thead>
+                    <tr>
+                        <th style="padding-left: 1em; padding-right: 1em; text-align: center">Field 1</th>
+                        <th style="padding-left: 1em; padding-right: 1em; text-align: center">Field 2</th>
+                        <th style="padding-left: 1em; padding-right: 1em; text-align: center">Field 3</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top">value 1</td>
+                        <td style="padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top">value2</td>
+                        <td style="padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top">value3</td>
+                    </tr>
+                    <tr>
+                        <td style="padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top">value 4</td>
+                        <td style="padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top">value5</td>
+                        <td style="padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top">value6</td>
+                    </tr>
+                    <tr>
+                        <td style="padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top">value 7</td>
+                        <td style="padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top">value8</td>
+                        <td style="padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top">value9</td>
+                    </tr>
+                </tbody>
+            </table>
+            """).strip()
 
 
 if _have_sqlite:
@@ -751,22 +752,22 @@ class UnpaddedTableTest(unittest.TestCase):
     def testUnbordered(self):
         self.x.border = False
         result = self.x.get_string()
-        self.assertEqual(result.strip(), """
-abc
-def
-g..
-""".strip())
+        self.assertEqual(result.strip(), textwrap.dedent("""\
+            abc
+            def
+            g..
+            """).strip())
 
     def testBordered(self):
         self.x.border = True
         result = self.x.get_string()
-        self.assertEqual(result.strip(), """
-+-+-+-+
-|a|b|c|
-|d|e|f|
-|g|.|.|
-+-+-+-+
-""".strip())
+        self.assertEqual(result.strip(), textwrap.dedent("""\
+            +-+-+-+
+            |a|b|c|
+            |d|e|f|
+            |g|.|.|
+            +-+-+-+
+            """).strip())
 
 
 class PrintMarkdownAndRstTest(unittest.TestCase):
@@ -779,26 +780,26 @@ class PrintMarkdownAndRstTest(unittest.TestCase):
         result = self.x.get_md_string()
         print()
         print(result)
-        self.assertEqual(result.strip(), """
-| A  | B  | C  |
-|----|----|----|
-| a  | b  | c  |
-| aa | bb | cc |
-""".strip())
+        self.assertEqual(result.strip(), textwrap.dedent("""\
+            | A  | B  | C  |
+            |----|----|----|
+            | a  | b  | c  |
+            | aa | bb | cc |
+            """).strip())
 
     def testRstOutput(self):
         result = self.x.get_rst_string()
         print()
         print(result)
-        self.assertEqual(result.strip(), """
-+----+----+----+
-| A  | B  | C  |
-+====+====+====+
-| a  | b  | c  |
-+----+----+----+
-| aa | bb | cc |
-+----+----+----+
-""".strip())
+        self.assertEqual(result.strip(), textwrap.dedent("""\
+            +----+----+----+
+            | A  | B  | C  |
+            +====+====+====+
+            | a  | b  | c  |
+            +----+----+----+
+            | aa | bb | cc |
+            +----+----+----+
+            """).strip())
 
 
 if __name__ == "__main__":
