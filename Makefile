@@ -31,7 +31,7 @@ clean-cover:
 
 .PHONY: coverage
 coverage: #clean-cover
-	@nosetests --with-coverage --cover-package=$(PACKAGE_NAME) --cover-html --cover-html-dir=$(COVERAGE_DIR)
+	@nosetests --cover-erase --with-coverage --cover-package=$(PACKAGE_NAME) --cover-html --cover-html-dir=$(COVERAGE_DIR)
 
 .PHONY: opencover
 opencover: coverage
