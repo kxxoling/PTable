@@ -176,19 +176,18 @@ class PrettyTable(object):
                 # Equal padding on either side
                 return (excess // 2) * " " + text + (excess // 2) * " "
 
-    def __getattr__(self, name):
+    @property
+    def rowcount(self):
+        return len(self._rows)
 
-        if name == "rowcount":
-            return len(self._rows)
-        elif name == "colcount":
-            if self._field_names:
-                return len(self._field_names)
-            elif self._rows:
-                return len(self._rows[0])
-            else:
-                return 0
+    @property
+    def colcount(self):
+        if self._field_names:
+            return len(self._field_names)
+        elif self._rows:
+            return len(self._rows[0])
         else:
-            raise AttributeError(name)
+            return 0
 
     def __getitem__(self, index):
 
