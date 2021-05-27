@@ -461,6 +461,33 @@ class BreakLineTests(unittest.TestCase):
 </table>
 """.strip()
 
+    def testHtmlNoEscaping(self):
+        t = PrettyTable(['<a href="https://testsite.com">Field 1</a>', 'Field 2'])
+        t.add_row(['value 1', 'value 2'])
+        t.add_row(['<a href="https://testsite.com">value 3</a>', 'value 4'])
+        result = t.get_html_string(header_escape=False, data_escape=False)
+        print(result)
+        assert result.strip() == """
+<table>
+    <thead>
+        <tr>
+            <th><a href="https://testsite.com">Field 1</a></th>
+            <th>Field 2</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>value 1</td>
+            <td>value 2</td>
+        </tr>
+        <tr>
+            <td><a href="https://testsite.com">value 3</a></td>
+            <td>value 4</td>
+        </tr>
+    </tbody>
+</table>
+""".strip()
+
 
 class MaxMaxWidthsTests(unittest.TestCase):
     def testMaxTableWidthIsTheLaw(self):
