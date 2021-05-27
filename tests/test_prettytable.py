@@ -461,6 +461,59 @@ class BreakLineTests(unittest.TestCase):
 </table>
 """.strip()
 
+    def testHtmlNoEscapingNoFormat(self):
+        t = PrettyTable(['<a href="https://testsite.com">Field 1</a>', 'Field 2'])
+        t.add_row(['value 1', 'value 2'])
+        t.add_row(['<a href="https://testsite.com">value 3</a>', 'value 4'])
+        result = t.get_html_string(header_escape=False, data_escape=False)
+        print(result)
+        assert result.strip() == """
+<table>
+    <thead>
+        <tr>
+            <th><a href="https://testsite.com">Field 1</a></th>
+            <th>Field 2</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>value 1</td>
+            <td>value 2</td>
+        </tr>
+        <tr>
+            <td><a href="https://testsite.com">value 3</a></td>
+            <td>value 4</td>
+        </tr>
+    </tbody>
+</table>
+""".strip()
+
+    def testHtmlNoEscapingFormat(self):
+        t = PrettyTable(['<a href="https://testsite.com">Field 1</a>', 'Field 2'])
+        t.add_row(['value 1', 'value 2'])
+        t.add_row(['<a href="https://testsite.com">value 3</a>', 'value 4'])
+        result = t.get_html_string(header_escape=False, data_escape=False, format=True)
+        print(result)
+        assert result.strip() == """
+<table frame="box" rules="cols">
+    <thead>
+        <tr>
+            <th style="padding-left: 1em; padding-right: 1em; text-align: center"><a href="https://testsite.com">Field 1</a></th>
+            <th style="padding-left: 1em; padding-right: 1em; text-align: center">Field 2</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td style="padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top">value 1</td>
+            <td style="padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top">value 2</td>
+        </tr>
+        <tr>
+            <td style="padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top"><a href="https://testsite.com">value 3</a></td>
+            <td style="padding-left: 1em; padding-right: 1em; text-align: center; vertical-align: top">value 4</td>
+        </tr>
+    </tbody>
+</table>
+""".strip()
 
 class MaxMaxWidthsTests(unittest.TestCase):
     def testMaxTableWidthIsTheLaw(self):
