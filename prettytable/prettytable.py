@@ -83,11 +83,11 @@ class PrettyTable(object):
             self._widths = []
 
         # Options
-        self._options = "title start end fields header border sortby reversesort sort_key attributes format hrules vrules".split()
+        self._options = "title start end fields header header_escape border sortby reversesort sort_key attributes format hrules vrules".split()
         self._options.extend(
             "int_format float_format min_table_width max_table_width padding_width left_padding_width right_padding_width".split())
         self._options.extend(
-            "vertical_char horizontal_char junction_char header_style valign xhtml print_empty oldsortslice".split())
+            "vertical_char horizontal_char junction_char data_escape header_style valign xhtml print_empty oldsortslice".split())
         self._options.extend("align valign max_width min_width".split())
         for option in self._options:
             if option in kwargs:
@@ -104,7 +104,15 @@ class PrettyTable(object):
             self._header = kwargs["header"]
         else:
             self._header = True
+        if kwargs["header_escape"] in (True, False):
+            self._header_escape = kwargs["header_escape"]
+        else:
+            self._header_escape = True
         self._header_style = kwargs["header_style"] or None
+        if kwargs["data_escape"] in (True, False):
+            self._data_escape = kwargs["data_escape"]
+        else:
+            self._data_escape = True
         if kwargs["border"] in (True, False):
             self._border = kwargs["border"]
         else:
@@ -247,7 +255,7 @@ class PrettyTable(object):
             self._validate_vrules(option, val)
         elif option in ("fields"):
             self._validate_all_field_names(option, val)
-        elif option in ("header", "border", "reversesort", "xhtml", "print_empty", "oldsortslice"):
+        elif option in ("header", "header_escape", "data_escape", "border", "reversesort", "xhtml", "print_empty", "oldsortslice"):
             self._validate_true_or_false(option, val)
         elif option in ("header_style"):
             self._validate_header_style(val)
@@ -1465,6 +1473,7 @@ class PrettyTable(object):
         end - index of last data row to include in output PLUS ONE (list slice style)
         fields - names of fields (columns) to include
         header - print a header showing field names (True or False)
+        header_escape - escapes the text within a header (True or False)
         border - print a border around the table (True or False)
         hrules - controls printing of horizontal rules after rows.  Allowed values: ALL, FRAME, HEADER, NONE
         vrules - controls printing of vertical rules between columns.  Allowed values: FRAME, ALL, NONE
@@ -1476,6 +1485,7 @@ class PrettyTable(object):
         sortby - name of field to sort rows by
         sort_key - sorting key function, applied to data points before sorting
         attributes - dictionary of name/value pairs to include as HTML attributes in the <table> tag
+        data_escape - escapes the text within a data field (True or False)
         xhtml - print <br/> tags if True, <br> tags if false"""
 
         options = self._get_options(kwargs)
@@ -1518,7 +1528,10 @@ class PrettyTable(object):
             for field in self._field_names:
                 if options["fields"] and field not in options["fields"]:
                     continue
-                lines.append("            <th>%s</th>" % escape(field).replace("\n", linebreak))
+                if options["header_escape"]:
+                    lines.append("            <th>%s</th>" % escape(field).replace("\n", linebreak))
+                else:
+                    lines.append("            <th>%s</th>" % field.replace("\n", linebreak))
             lines.append("        </tr>")
             lines.append("    </thead>")
 
@@ -1531,7 +1544,10 @@ class PrettyTable(object):
             for field, datum in zip(self._field_names, row):
                 if options["fields"] and field not in options["fields"]:
                     continue
-                lines.append("            <td>%s</td>" % escape(datum).replace("\n", linebreak))
+                if options["data_escape"]:
+                    lines.append("            <td>%s</td>" % escape(datum).replace("\n", linebreak))
+                else:
+                    lines.append("            <td>%s</td>" % datum.replace("\n", linebreak))
             lines.append("        </tr>")
         lines.append("    </tbody>")
         lines.append("</table>")
@@ -1585,9 +1601,14 @@ class PrettyTable(object):
             for field in self._field_names:
                 if options["fields"] and field not in options["fields"]:
                     continue
-                lines.append(
-                    "            <th style=\"padding-left: %dem; padding-right: %dem; text-align: center\">%s</th>" % (
-                    lpad, rpad, escape(field).replace("\n", linebreak)))
+                if options["header_escape"]:
+                    lines.append(
+                        "            <th style=\"padding-left: %dem; padding-right: %dem; text-align: center\">%s</th>" % (
+                        lpad, rpad, escape(field).replace("\n", linebreak)))
+                else:
+                    lines.append(
+                        "            <th style=\"padding-left: %dem; padding-right: %dem; text-align: center\">%s</th>" % (
+                        lpad, rpad, field.replace("\n", linebreak)))                    
             lines.append("        </tr>")
             lines.append("    </thead>")
 
@@ -1605,9 +1626,14 @@ class PrettyTable(object):
             for field, datum, align, valign in zip(self._field_names, row, aligns, valigns):
                 if options["fields"] and field not in options["fields"]:
                     continue
-                lines.append(
-                    "            <td style=\"padding-left: %dem; padding-right: %dem; text-align: %s; vertical-align: %s\">%s</td>" % (
-                    lpad, rpad, align, valign, escape(datum).replace("\n", linebreak)))
+                if options["header_escape"]:
+                    lines.append(
+                        "            <td style=\"padding-left: %dem; padding-right: %dem; text-align: %s; vertical-align: %s\">%s</td>" % (
+                        lpad, rpad, align, valign, escape(datum).replace("\n", linebreak)))
+                else:
+                    lines.append(
+                        "            <td style=\"padding-left: %dem; padding-right: %dem; text-align: %s; vertical-align: %s\">%s</td>" % (
+                        lpad, rpad, align, valign, datum.replace("\n", linebreak)))                    
             lines.append("        </tr>")
         lines.append("    </tbody>")
         lines.append("</table>")
