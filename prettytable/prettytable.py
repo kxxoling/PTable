@@ -421,7 +421,7 @@ class PrettyTable(object):
     def align(self, val):
         if not self._field_names:
             self._align = {}
-        elif val is None or (isinstance(val, dict) and len(val) is 0):
+        elif val is None or (isinstance(val, dict) and len(val) == 0):
             for field in self._field_names:
                 self._align[field] = "c"
         else:
@@ -441,7 +441,7 @@ class PrettyTable(object):
     def valign(self, val):
         if not self._field_names:
             self._valign = {}
-        elif val is None or (isinstance(val, dict) and len(val) is 0):
+        elif val is None or (isinstance(val, dict) and len(val) == 0):
             for field in self._field_names:
                 self._valign[field] = "t"
         else:
@@ -459,7 +459,7 @@ class PrettyTable(object):
 
     @max_width.setter
     def max_width(self, val):
-        if val is None or (isinstance(val, dict) and len(val) is 0):
+        if val is None or (isinstance(val, dict) and len(val) == 0):
             self._max_width = {}
         else:
             self._validate_option("max_width", val)
@@ -489,7 +489,7 @@ class PrettyTable(object):
 
     @min_width.setter
     def min_width(self, val):
-        if val is None or (isinstance(val, dict) and len(val) is 0):
+        if val is None or (isinstance(val, dict) and len(val) == 0):
             self._min_width = {}
         else:
             self._validate_option("min_width", val)
@@ -687,7 +687,7 @@ class PrettyTable(object):
 
     @int_format.setter
     def int_format(self, val):
-        if val is None or (isinstance(val, dict) and len(val) is 0):
+        if val is None or (isinstance(val, dict) and len(val) == 0):
             self._int_format = {}
         else:
             self._validate_option("int_format", val)
@@ -704,7 +704,7 @@ class PrettyTable(object):
 
     @float_format.setter
     def float_format(self, val):
-        if val is None or (isinstance(val, dict) and len(val) is 0):
+        if val is None or (isinstance(val, dict) and len(val) == 0):
             self._float_format = {}
         else:
             self._validate_option("float_format", val)
@@ -1295,7 +1295,7 @@ class PrettyTable(object):
                 fieldname = field.lower()
             else:
                 fieldname = field
-            bits.append(" " * lpad + self._justify(fieldname, width, self._align[field]) + " " * rpad)
+            bits.append(" " * lpad + self._justify(fieldname, width, self._align.get(field, 'c')) + " " * rpad)
             if options["border"]:
                 if options["vrules"] == ALL:
                     bits.append(options["vertical_char"])
@@ -1343,7 +1343,7 @@ class PrettyTable(object):
 
         for field, value, width, in zip(self._field_names, row, self._widths):
 
-            valign = self._valign[field]
+            valign = self._valign.get(field, 'm')
             lines = value.split("\n")
             dHeight = row_height - len(lines)
             if dHeight:
@@ -1359,7 +1359,7 @@ class PrettyTable(object):
                 if options["fields"] and field not in options["fields"]:
                     continue
 
-                bits[y].append(" " * lpad + self._justify(l, width, self._align[field]) + " " * rpad)
+                bits[y].append(" " * lpad + self._justify(l, width, self._align.get(field, 'c')) + " " * rpad)
                 if options["border"]:
                     if options["vrules"] == ALL:
                         bits[y].append(self.vertical_char)

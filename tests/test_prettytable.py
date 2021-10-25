@@ -3,7 +3,7 @@
 
 from prettytable import PrettyTable
 from prettytable import ALL, HEADER, MSWORD_FRIENDLY, NONE
-from prettytable import from_csv, from_db_cursor, from_html, from_html_one
+from prettytable import from_csv, from_json, from_db_cursor, from_html, from_html_one
 
 from prettytable._compact import StringIO
 try:
@@ -64,29 +64,28 @@ class BuildEquivelanceTest(unittest.TestCase):
         self.assertEqual(self.row.get_html_string(), self.mix.get_html_string())
 
 
-# class FieldnamelessTableTest(unittest.TestCase):
-#
-#    """Make sure that building and stringing a table with no fieldnames works fine"""
-#
-#    def setUp(self):
-#        self.x = PrettyTable()
-#        self.x.add_row(["Adelaide",1295, 1158259, 600.5])
-#        self.x.add_row(["Brisbane",5905, 1857594, 1146.4])
-#        self.x.add_row(["Darwin", 112, 120900, 1714.7])
-#        self.x.add_row(["Hobart", 1357, 205556, 619.5])
-#        self.x.add_row(["Sydney", 2058, 4336374, 1214.8])
-#        self.x.add_row(["Melbourne", 1566, 3806092, 646.9])
-#        self.x.add_row(["Perth", 5386, 1554769, 869.4])
-#
-#    def testCanStringASCII(self):
-#        self.x.get_string()
-#
-#    def testCanStringHTML(self):
-#        self.x.get_html_string()
-#
-#    def testAddFieldnamesLater(self):
-#        self.x.field_names = ["City name", "Area", "Population", "Annual Rainfall"]
-#        self.x.get_string()
+class FieldnamelessTableTest(unittest.TestCase):
+    """Make sure that building and stringing a table with no fieldnames works fine"""
+
+    def setUp(self):
+        self.x = PrettyTable()
+        self.x.add_row(["Adelaide", 1295, 1158259, 600.5])
+        self.x.add_row(["Brisbane", 5905, 1857594, 1146.4])
+        self.x.add_row(["Darwin", 112, 120900, 1714.7])
+        self.x.add_row(["Hobart", 1357, 205556, 619.5])
+        self.x.add_row(["Sydney", 2058, 4336374, 1214.8])
+        self.x.add_row(["Melbourne", 1566, 3806092, 646.9])
+        self.x.add_row(["Perth", 5386, 1554769, 869.4])
+
+    def testCanStringASCII(self):
+        self.x.get_string()
+
+    def testCanStringHTML(self):
+        self.x.get_html_string()
+
+    def testAddFieldnamesLater(self):
+        self.x.field_names = ["City name", "Area", "Population", "Annual Rainfall"]
+        self.x.get_string()
 
 
 class CityDataTest(unittest.TestCase):
@@ -593,6 +592,59 @@ class CsvConstructorTest(BasicTests):
         Darwin, 0112 ,   120900   ,      1714.7"""
         csv_fp = StringIO.StringIO(csv_string)
         self.x = from_csv(csv_fp)
+
+
+class JsonConstructorTest(BasicTests):
+    def setUp(self):
+        json_string = """[
+  {
+    "City name": "Sydney",
+    "Area": "2058",
+    "Population": "4336374",
+    "Annual Rainfall": "1214.8"
+  },
+  {
+    "City name": "Melbourne",
+    "Area": "1566",
+    "Population": "3806092",
+    "Annual Rainfall": "646.9"
+  },
+  {
+    "City name": "Brisbane",
+    "Area": "5905",
+    "Population": "1857594",
+    "Annual Rainfall": "1146.4"
+  },
+  {
+    "City name": "Perth",
+    "Area": "5386",
+    "Population": "1554769",
+    "Coordinates": "31.9523° S, 115.8613° E",
+    "Annual Rainfall": "869.4"
+  },
+  {
+    "City name": "Adelaide",
+    "Area": "1295",
+    "Population": "1158259",
+    "Annual Rainfall": "600.5"
+  },
+  {
+    "City name": "Hobart",
+    "Area": "1357",
+    "Population": "205556",
+    "Annual Rainfall": "619.5"
+  },
+  {
+    "City name": "Darwin",
+    "Area": "0112",
+    "Population": "120900",
+    "Annual Rainfall": "1714.7"
+  }
+]"""
+        json_fp = StringIO.StringIO(json_string)
+        self.x = from_json(json_fp)
+        print("Generated using json:")
+        print(self.x)
 
 
 if _have_sqlite:

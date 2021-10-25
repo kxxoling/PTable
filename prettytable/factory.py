@@ -2,6 +2,7 @@
 Table factories
 """
 import csv
+import json
 from .prettytable import PrettyTable
 from ._compact import py3k, HTMLParser
 
@@ -30,6 +31,28 @@ def from_csv(fp, field_names=None, **kwargs):
 
     for row in reader:
         table.add_row([x.strip() for x in row])
+
+    return table
+
+
+def from_json(fp, field_names=None, **kwargs):
+    reader = json.load(fp)
+
+    table = PrettyTable(**kwargs)
+    table_field_names = []
+    if field_names:
+        table_field_names.extend(field_names)
+    else:
+        for row in reader:
+            table_field_names.extend([x for x in row.keys() if x not in table_field_names])
+
+    table.field_names = table_field_names
+
+    for row in reader:
+        d = {k: "" for k in table_field_names}
+        d.update(row)
+        add_row = [x for x in d.values()]
+        table.add_row(add_row)
 
     return table
 
