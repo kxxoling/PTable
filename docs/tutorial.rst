@@ -2,11 +2,11 @@
 Tutorial
 ========
 
-**This tutorial is distributed with PrettyTable and is meant to serve as
-a "quick start" guide for the lazy or impatient. It is not an exhaustive
-description of the whole API, and it is not guaranteed to be 100% up to
-date. For more complete and update documentation, check the PrettyTable
-wiki at http://code.google.com/p/prettytable/w/list**
+**This tutorial is distributed with PrettyTable and is meant to 
+serve as a "quick start" guide. It is not an exhaustive description 
+API, and it is not guaranteed to be 100% up to of the whole
+date. For more complete and update documentation, check the 
+PrettyTable wiki at http://code.google.com/p/prettytable/w/list**
 
 Getting your data into (and out of) the table
 =============================================
@@ -144,12 +144,6 @@ To print a table in ASCII form, you can just do this:
 
 ::
 
-    print x
-
-in Python 2.x or:
-
-::
-
     print(x)
 
 in Python 3.x.
@@ -191,7 +185,7 @@ be printed:
 
 ::
 
-    print x.get_string(fields=["City name", "Population"])
+    print(x.get_string(fields=["City name", "Population"]))
 
 gives:
 
@@ -217,7 +211,7 @@ to 1 (the first row is row 0, so the second is row 1) and set ``end`` to
 
 ::
 
-    print x.get_string(start=1,end=4)
+    print(x.get_string(start=1,end=4))
 
 prints:
 
@@ -247,7 +241,7 @@ respectively:
 ::
 
     x.align = "r"
-    print x
+    print(x)
 
 gives:
 
@@ -278,7 +272,7 @@ were a dictionary.
     x.align["Area"] = "c"
     x.align["Population"] = "r"
     x.align["Annual Rainfall"] = "c"
-    print x
+    print(x)
 
 gives:
 
@@ -310,7 +304,7 @@ this:
 
 ::
 
-    print x.get_string(sortby="Population")
+    print(x.get_string(sortby="Population"))
 
 to get
 
@@ -337,9 +331,9 @@ make the setting long term like this:
 ::
 
     x.sortby = "Population"
-    print x
-    print x
-    print x
+    print(x)
+    print(x)
+    print(x)
 
 All three tables printed by this code will be sorted by population (you
 could do ``x.reversesort = True`` as well, if you wanted). The behaviour
@@ -382,7 +376,7 @@ table" feature:
 
     from prettytable import MSWORD_FRIENDLY
     x.set_style(MSWORD_FRIENDLY)
-    print x
+    print(x)
 
 In addition to ``MSWORD_FRIENDLY`` there are currently two other
 in-built styles you can use for your tables:
@@ -454,9 +448,9 @@ you can do this:
 ::
 
     x.border = False
-    print x
-    print x
-    print x
+    print(x)
+    print(x)
+    print(x)
 
 Neither of the 3 tables printed by this will have borders, even if you
 do things like add extra rows inbetween them. The lack of borders will
@@ -494,9 +488,9 @@ could do this:
 
 ::
 
-    print x
-    print x.get_string(border=False)
-    print x
+    print(x)
+    print(x.get_string(border=False))
+    print(x)
 
 Displaying your table in HTML form
 ==================================
